@@ -19,17 +19,18 @@ namespace mmd {
         virtual void RemovePoser(Poser& poser) = 0;
         virtual void Reset() = 0;
         virtual void React(float step) = 0;
+
+        virtual void SetGravityStrength(float strength) = 0;
+        virtual void SetGravityDirection(const Vector3f& direction) = 0;
+
+        virtual float GetGravityStrength() const = 0;
+        virtual Vector3f GetGravityDirection() const = 0;
+
+        virtual void SetFloor(bool has_floor) = 0;
+        virtual bool IsHasFloor() const = 0;
     protected:
         typedef Poser::BoneImage& BoneImageReference;
         static BoneImageReference GetPoserBoneImage(Poser& poser, size_t index);
-    };
-
-    class NullPhysicsReactor : public PhysicsReactor {
-    public:
-        /*virtual*/ void AddPoser(Poser& poser) {}
-        /*virtual*/ void RemovePoser(Poser& poser) {}
-        /*virtual*/ void Reset() {}
-        /*virtual*/ void React(float step) {}
     };
 
     inline PhysicsReactor::BoneImageReference PhysicsReactor::GetPoserBoneImage(Poser& poser, size_t index) {

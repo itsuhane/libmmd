@@ -22,7 +22,7 @@ namespace mmd {
 
     class TextureRegistry {
     public:
-        const Texture& GetTexture(const std::wstring &texture_path);
+        const Texture& GetTexture(const std::wstring &texture_name, const std::wstring &model_location=L"");
         const Texture& GetGlobalToon(size_t toon_id);
         void SetGlobalToonRootPath(std::wstring root_path);
     private:
@@ -42,7 +42,7 @@ namespace mmd {
                 L"toon09.bmp",
                 L"toon10.bmp"  // 0x09
             };
-            return canonical_toon_names[id+1];
+            return canonical_toon_names[id];
         }
     };
 

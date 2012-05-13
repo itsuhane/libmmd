@@ -12,15 +12,13 @@
 namespace std {
     typedef std::basic_string<wchar_t> wstring;
 
-#ifdef _MSC_VER
-#if _MSC_VER<1600
+#ifndef MMD_USE_CSTDINT
     typedef unsigned __int8 uint8_t;
     typedef unsigned __int16 uint16_t;
     typedef unsigned __int32 uint32_t;
     typedef __int8 int8_t;
     typedef __int16 int16_t;
     typedef __int32 int32_t;
-#endif
 #endif
 
 } /* End of namespace std */
@@ -47,7 +45,7 @@ namespace mmd {
 
         void PrependMessage(const std::string& message);
 
-        /*virtual*/ const char* what() const;
+        /*virtual*/ const char* what() const throw();
     private:
         std::string msg_;
     };
@@ -65,24 +63,32 @@ namespace mmd {
     class FileReader
     {
     public:
+        FileReader();
+
         FileReader(const std::string &filename);
+        FileReader(const std::wstring &filename);
+
+        static bool FileExists(const std::wstring &filename);
+
         template<typename T> T Read();
         size_t ReadIndex(size_t byte_size);
         std::string ReadAnsiString();
         std::wstring ReadString(bool utf8 = false);
 
+        buffer_type& GetBuffer();
         const buffer_type& GetBuffer() const;
         void Reset();
 
-        const std::string& GetPath() const;
-        std::string GetFilename() const;
-        std::string GetLocation() const;
+        const std::wstring& GetPath() const;
+        std::wstring GetFilename() const;
+        std::wstring GetLocation() const;
 
         size_t GetLength() const;
         size_t GetPosition() const;
         ptrdiff_t GetRemainedLength() const;
     private:
-        std::string path_;
+        void Initialize();
+        std::wstring path_;
         buffer_type buffer_;
         size_t cursor_;
     };

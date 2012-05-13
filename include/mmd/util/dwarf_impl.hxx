@@ -14,7 +14,7 @@ inline exception::exception(const std::string& message, const std::exception& e)
 inline void exception::PrependMessage(const std::string& message) {
     msg_ = message+'\n'+msg_;
 }
-inline const char* exception::what() const { return msg_.c_str(); }
+inline const char* exception::what() const throw() { return msg_.c_str(); }
 
 template<size_t length> inline mmd_string<length>::operator std::string () const {
     char buffer[length+1];
@@ -23,10 +23,12 @@ template<size_t length> inline mmd_string<length>::operator std::string () const
     return std::string(buffer);
 }
 
-inline FileReader::FileReader(const std::string &filename)
-    : cursor_(0), path_(filename)
-{
-    FILE *f = fopen(filename.c_str(), "rb");
+inline void FileReader::Initialize() {
+#ifdef MMD_WINDOWS
+    FILE *f = _wfopen(path_.c_str(), L"rb");
+#else
+    FILE *f = fopen(UTF16ToNativeString(path_).c_str(), "rb");
+#endif
     if(f==NULL) {
         throw exception(std::string("FileReader: Cannot open file."));
     }
@@ -40,6 +42,31 @@ inline FileReader::FileReader(const std::string &filename)
     buffer_.assign(file_length, 0);
     fread(&buffer_[0], 1, file_length, f);
     fclose(f);
+}
+
+inline FileReader::FileReader() : cursor_(0) {}
+
+inline FileReader::FileReader(const std::string &filename) : path_(NativeToUTF16String(filename)), cursor_(0)
+{
+    Initialize();
+}
+
+inline FileReader::FileReader(const std::wstring &filename) : path_(filename), cursor_(0)
+{
+    Initialize();
+}
+
+inline bool FileReader::FileExists(const std::wstring &filename) {
+#ifdef MMD_WINDOWS
+    FILE *f = _wfopen(filename.c_str(), L"rb");
+#else
+    FILE *f = fopen(UTF16ToNativeString(filename).c_str(), "rb");
+#endif
+    bool result = (f!=NULL);
+    if(result) {
+        fclose(f);
+    }
+    return result;
 }
 
 template<typename T> inline T FileReader::Read() {
@@ -89,32 +116,37 @@ inline std::wstring FileReader::ReadString(bool utf8) {
     }
     cursor_ += length;
     if(!utf8) {
+#ifdef MMD_WINDOWS
         return std::wstring((wchar_t*)&buffer_[cursor_-length], length/sizeof(wchar_t));
+#else
+        return std::wstring((std::uint16_t*)&buffer_[cursor_-length], (std::uint16_t*)&buffer_[cursor_]);
+#endif
     } else {
         return UTF8ToUTF16String(std::string((char*)&buffer_[cursor_-length], length));
     }
 }
 
+inline buffer_type& FileReader::GetBuffer() { return buffer_; }
 inline const buffer_type& FileReader::GetBuffer() const { return buffer_; }
 inline void FileReader::Reset() { cursor_ = 0; }
 
-inline const std::string& FileReader::GetPath() const {
+inline const std::wstring& FileReader::GetPath() const {
     return path_;
 }
-inline std::string FileReader::GetFilename() const {
-    std::string::size_type pos = path_.find_last_of("/\\");
-    if(pos!=std::string::npos) {
+inline std::wstring FileReader::GetFilename() const {
+    std::wstring::size_type pos = path_.find_last_of(L"/\\");
+    if(pos!=std::wstring::npos) {
         return path_.substr(pos+1);
     } else {
         return path_;
     }
 }
-inline std::string FileReader::GetLocation() const {
-    std::string::size_type pos = path_.find_last_of("/\\");
-    if(pos!=std::string::npos) {
+inline std::wstring FileReader::GetLocation() const {
+    std::wstring::size_type pos = path_.find_last_of(L"/\\");
+    if(pos!=std::wstring::npos) {
         return path_.substr(0,pos+1);
     } else {
-        return "";
+        return L"";
     }
 }
 
@@ -139,7 +171,7 @@ inline std::wstring s2ws(const std::string &s) {
 }
 
 inline std::string ws2s(const std::wstring &ws) {
-    size_t l = 2*ws.size()+1;
+    size_t l = 4*ws.size()+1;
     std::string ts(l, 0);
     wcstombs(&ts[0], ws.c_str(), l);
     return std::string(ts.c_str());
@@ -166,13 +198,26 @@ inline std::wstring UTF8ToUTF16String(const std::string &s) {
     setlocale(LC_ALL, "C");
     std::wstring ws = s2ws(s);
     setlocale(LC_ALL, c_locale.c_str());
-    return ws;    
+    return ws;
 }
 
 inline std::wstring ShiftJISToUTF16String(const std::string &s) {
+#ifdef MMD_WINDOWS
     std::string c_locale = setlocale(LC_ALL, NULL);
     setlocale(LC_ALL, "Japanese_Japan.932");
     std::wstring ws = s2ws(s);
     setlocale(LC_ALL, c_locale.c_str());
     return ws;
+#else
+    iconv_t cd = iconv_open("UTF-16", "SHIFT-JIS");
+    std::vector<char> from_buffer(s.begin(), s.end());
+    std::vector<char> to_buffer(s.size()*4+1, '\0');
+    char* from_ptr = &from_buffer[0];
+    char* to_ptr = &to_buffer[0];
+    size_t from_length = s.size();
+    size_t to_length = s.size()*4+1;
+    iconv(cd, &from_ptr, &from_length, &to_ptr, &to_length);
+    iconv_close(cd);
+    return std::wstring((std::uint16_t*)&to_buffer[0], (std::uint16_t*)&to_buffer[s.size()*4-to_length+1]);
+#endif
 }

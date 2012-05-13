@@ -11,11 +11,6 @@
 
 namespace mmd {
 
-    class Pose {
-    public:
-    private:
-    };
-
     class Motion {
     public:
         struct BoneMotion {
@@ -67,8 +62,10 @@ namespace mmd {
 
         const BoneMotion GetBoneMotion(const std::wstring &bone_name, size_t frame) const;
         const BoneMotion GetBoneMotion(const std::wstring &bone_name, double time) const;
-    // UNDONE
-    //private:
+
+        bool IsBoneRegistered(const std::wstring& bone_name) const;
+
+    private:
         std::wstring name_;
         std::map<std::wstring, std::map<size_t, BoneKeyframe>> bone_motions_;
     };

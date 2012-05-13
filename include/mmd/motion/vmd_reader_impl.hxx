@@ -10,7 +10,7 @@ inline Motion* VmdReader::Read(FileReader &file) const {
     Motion *motion = NULL;
     try {
         motion = new Motion();
-        
+
         file.Reset();
 
         interprete::vmd_header header = file.Read<interprete::vmd_header>();

@@ -6,6 +6,10 @@
             http://www.boost.org/LICENSE_1_0.txt)
 **/
 
+/**
+  Reference:
+    PMX Specification, which could be found in 'Lib/' directory of PMDEditor.
+**/
 inline Model* PmxReader::Read(FileReader &file) const {
     Model *model = NULL;
 
@@ -13,7 +17,7 @@ inline Model* PmxReader::Read(FileReader &file) const {
         model = new Model();
 
         file.Reset();
-        
+
         interprete::pmx_header header = file.Read<interprete::pmx_header>();
         std::uint8_t file_flags_size = file.Read<std::uint8_t>();
 
@@ -42,7 +46,7 @@ inline Model* PmxReader::Read(FileReader &file) const {
         size_t vertex_num = (size_t)file.Read<std::int32_t>();
         for(size_t i=0;i<vertex_num;++i) {
             interprete::pmx_vertex_basic pv = file.Read<interprete::pmx_vertex_basic>();
-            
+
             Model::Vertex<ref> vertex = model->NewVertex();
             Model::SkinningOperator &op = vertex.GetSkinningOperator();
 
@@ -54,7 +58,7 @@ inline Model* PmxReader::Read(FileReader &file) const {
                 Vector4f euv = file.Read<Vector4f>();
                 vertex.SetExtraUVCoordinate(ei, euv);
             }
-            
+
             op.SetSkinningType((Model::SkinningOperator::SkinningType)file.Read<std::int8_t>());
             switch(op.GetSkinningType()) {
             case Model::SkinningOperator::SKINNING_BDEF1:
@@ -97,13 +101,11 @@ inline Model* PmxReader::Read(FileReader &file) const {
         }
 
         TextureRegistry &registry = MMDNG::GetMMDNG().GetTextureRegistry();
-
-        std::wstring file_loc = NativeToUTF16String(file.GetLocation());
-
+        std::wstring model_file_loc = file.GetLocation();
         size_t texture_num = (size_t)file.Read<std::int32_t>();
         std::vector<const Texture*> texture_list(texture_num);
         for(size_t i=0;i<texture_num;++i) {
-            texture_list[i] = &(registry.GetTexture(file_loc+file.ReadString(utf8_encoding)));
+            texture_list[i] = &(registry.GetTexture(file.ReadString(utf8_encoding), model_file_loc));
         }
 
         size_t part_num = (size_t)file.Read<std::int32_t>();
@@ -132,12 +134,14 @@ inline Model* PmxReader::Read(FileReader &file) const {
             material.SetEdgeSize(pm.edge_size);
 
             size_t texture_index = file.ReadIndex(texture_index_size);
-            if(texture_index<texture_list.size())
+            if(texture_index<texture_list.size()) {
                 material.SetTexture(texture_list[texture_index]);
+            }
 
             size_t sub_texture_index = file.ReadIndex(texture_index_size);
-            if(sub_texture_index<texture_list.size())
+            if(sub_texture_index<texture_list.size()) {
                 material.SetSubTexture(texture_list[sub_texture_index]);
+            }
             material.SetSubTextureType((Material::SubTextureTypeEnum)file.Read<std::uint8_t>());
 
             bool use_global_toon = file.Read<std::uint8_t>()>0;
@@ -146,8 +150,9 @@ inline Model* PmxReader::Read(FileReader &file) const {
                 material.SetToon(&registry.GetGlobalToon(global_toon_index));
             } else {
                 size_t toon_index = file.ReadIndex(texture_index_size);
-                if(toon_index<texture_list.size())
+                if(toon_index<texture_list.size()) {
                     material.SetToon(texture_list[toon_index]);
+                }
             }
 
             material.SetMetaInfo(file.ReadString(utf8_encoding));
@@ -301,7 +306,8 @@ inline Model* PmxReader::Read(FileReader &file) const {
         }
 
         size_t entry_item_num = (size_t)file.Read<std::int32_t>();
-        // TODO 
+
+        // UNDONE
         for(size_t i=0;i<entry_item_num;++i) {
             std::wstring entry_item_name = file.ReadString(utf8_encoding);
             std::wstring entry_item_name_en = file.ReadString(utf8_encoding);
@@ -342,8 +348,8 @@ inline Model* PmxReader::Read(FileReader &file) const {
             rigid_body.SetType((Model::RigidBody::RigidBodyType)rb.type);
         }
 
-        size_t joint_num = (size_t)file.Read<std::int32_t>();
-        for(size_t i=0;i<joint_num;++i) {
+        size_t constraint_num = (size_t)file.Read<std::int32_t>();
+        for(size_t i=0;i<constraint_num;++i) {
             Model::Constraint& constraint = model->NewConstraint();
             constraint.SetName(file.ReadString(utf8_encoding));
             constraint.SetNameEn(file.ReadString(utf8_encoding));
@@ -364,6 +370,7 @@ inline Model* PmxReader::Read(FileReader &file) const {
                 throw exception(std::string("PmxReader: Only 6DOF spring joints are supported."));
             }
         }
+        model->Normalize();
     } catch(std::exception& e) {
         delete model;
         model = NULL;

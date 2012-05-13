@@ -13,6 +13,20 @@ namespace mmd {
 
     class ModelReader {
     public:
+        enum ModelFormat { MODEL_TYPE_PMD, MODEL_TYPE_PMX };
+
+        static ModelFormat GetModelFormat(FileReader &file) {
+            file.Reset();
+            std::string s = file.Read<mmd_string<3>>();
+            if(s=="Pmd") {
+                return MODEL_TYPE_PMD;
+            } else if(s=="PMX") {
+                return MODEL_TYPE_PMX;
+            } else {
+                throw exception(std::string("GetModelFormat: Cannot determine file format."));
+            }
+        }
+
         virtual Model* Read(FileReader &file) const = 0;
     };
 

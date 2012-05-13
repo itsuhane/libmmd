@@ -6,6 +6,10 @@
             http://www.boost.org/LICENSE_1_0.txt)
 **/
 
+/**
+  Reference:
+    Toorisugari no Kioku - http://blog.goo.ne.jp/torisu_tetosuki/
+**/
 inline Model* PmdReader::Read(FileReader &file) const
 {
     Model *model = NULL;
@@ -52,7 +56,7 @@ inline Model* PmdReader::Read(FileReader &file) const
         }
 
         TextureRegistry &registry = MMDNG::GetMMDNG().GetTextureRegistry();
-        std::wstring file_loc = NativeToUTF16String(file.GetLocation());
+        std::wstring model_file_loc = file.GetLocation();
 
         size_t part_num = file.Read<std::uint32_t>();
         size_t part_base_shift = 0;
@@ -88,12 +92,16 @@ inline Model* PmdReader::Read(FileReader &file) const
                 if(dlm_pos!=std::wstring::npos) {
                     std::wstring tex_path = tex_path_string.substr(0, dlm_pos);
                     std::wstring sph_path = tex_path_string.substr(dlm_pos+1);
-                    material.SetTexture(&registry.GetTexture(file_loc+tex_path));
-                    material.SetSubTexture(&registry.GetTexture(file_loc+sph_path));
-                    if(::tolower(*sph_path.rbegin())==L'a') {
-                        material.SetSubTextureType(Material::MAT_SUB_TEX_SPA);
-                    } else {
-                        material.SetSubTextureType(Material::MAT_SUB_TEX_SPH);
+                    if(tex_path.size()>0) {
+                        material.SetTexture(&registry.GetTexture(tex_path, model_file_loc));
+                    }
+                    if(sph_path.size()>0) {
+                        material.SetSubTexture(&registry.GetTexture(sph_path, model_file_loc));
+                        if(::tolower(*sph_path.rbegin())==L'a') {
+                            material.SetSubTextureType(Material::MAT_SUB_TEX_SPA);
+                        } else {
+                            material.SetSubTextureType(Material::MAT_SUB_TEX_SPH);
+                        }
                     }
                 } else {
                     size_t ext_dlm_pos = tex_path_string.find_last_of(L'.');
@@ -101,9 +109,9 @@ inline Model* PmdReader::Read(FileReader &file) const
                         std::wstring ext = tex_path_string.substr(ext_dlm_pos+1);
                         std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
                         if((ext!=L"sph")&&(ext!=L"spa")) {
-                            material.SetTexture(&registry.GetTexture(file_loc+tex_path_string));
+                            material.SetTexture(&registry.GetTexture(tex_path_string, model_file_loc));
                         } else {
-                            material.SetSubTexture(&registry.GetTexture(file_loc+tex_path_string));
+                            material.SetSubTexture(&registry.GetTexture(tex_path_string, model_file_loc));
                             if(*ext.rbegin()==L'a') {
                                 material.SetSubTextureType(Material::MAT_SUB_TEX_SPA);
                             } else {
@@ -111,7 +119,7 @@ inline Model* PmdReader::Read(FileReader &file) const
                             }
                         }
                     } else {
-                        material.SetTexture(&registry.GetTexture(file_loc+tex_path_string));
+                        material.SetTexture(&registry.GetTexture(tex_path_string, model_file_loc));
                     }
                 }
             }
@@ -131,6 +139,8 @@ inline Model* PmdReader::Read(FileReader &file) const
             raw_bones[i] = file.Read<interprete::pmd_bone>();
         }
 
+        // TODO - [1] We need to verify bone topology.
+
         std::set<size_t> ik_bone_ids;
 
         size_t ik_num = file.Read<std::uint16_t>();
@@ -145,12 +155,24 @@ inline Model* PmdReader::Read(FileReader &file) const
 
         std::sort(raw_iks.begin(), raw_iks.end());
 
+        size_t center_bone_index = Model::nil;
+
         for(size_t i=0; i<bone_num; ++i) {
             Model::Bone &bone = model->NewBone();
             const interprete::pmd_bone &raw_bone = raw_bones[i];
             bone.SetName(ShiftJISToUTF16String(raw_bone.name));
+            if(bone.GetName()==L"\x30BB\x30F3\x30BF\x30FC") {
+                center_bone_index = i;
+            }
             bone.SetPosition(raw_bone.position);
-            bone.SetParentIndex(raw_bone.parent_id);
+
+            // TODO - workaround here, need fix, see [1].
+            if(i!=(size_t)(raw_bone.parent_id)) {
+                bone.SetParentIndex(raw_bone.parent_id);
+            } else {
+                bone.SetParentIndex(Model::nil);
+            }
+
             bone.SetTransformLevel(0);
 
             bone.SetChildUseID(true);
@@ -221,8 +243,8 @@ inline Model* PmdReader::Read(FileReader &file) const
 
                             *bone = original_bone;
 
-                            bone->SetName(original_bone.GetName()+L"+PMDIK");
-                            bone->SetNameEn(original_bone.GetNameEn()+L"+PMDIK");
+                            bone->SetName(L"[IK]"+original_bone.GetName());
+                            bone->SetNameEn(L"[IK]"+original_bone.GetNameEn());
 
                             bone->SetParentIndex(i);
                             bone->SetChildUseID(false);
@@ -255,7 +277,7 @@ inline Model* PmdReader::Read(FileReader &file) const
                 }
             }
         }
-        
+
         // TODO - need verification
 
         for(size_t i=0;i<bone_num;++i) {
@@ -280,15 +302,36 @@ inline Model* PmdReader::Read(FileReader &file) const
         }
 
         size_t face_num = file.Read<std::uint16_t>();
+        size_t base_morph_index = Model::nil;
         for(size_t i=0;i<face_num;++i) {
             Model::Morph &morph = model->NewMorph();
             interprete::pmd_face_preamble fp = file.Read<interprete::pmd_face_preamble>();
             morph.SetName(ShiftJISToUTF16String(fp.name));
+            morph.SetCategory((Model::Morph::MorphCategory)fp.face_type);
+            if(morph.GetCategory()==Model::Morph::MORPH_CAT_SYSTEM) {
+                base_morph_index = i;
+            }
             morph.SetType(Model::Morph::MORPH_TYPE_VERTEX);
             for(size_t j=0;j<fp.vertex_num;++j) {
-                Model::Morph::MorphData &morph_data = morph.NewMorphData();
-                morph_data.GetVertexMorph().SetVertexIndex(file.Read<std::uint32_t>());
-                morph_data.GetVertexMorph().SetOffset(file.Read<Vector3f>());
+                Model::Morph::MorphData::VertexMorph &vertex_morph_data = morph.NewMorphData().GetVertexMorph();
+                vertex_morph_data.SetVertexIndex(file.Read<std::uint32_t>());
+                vertex_morph_data.SetOffset(file.Read<Vector3f>());
+            }
+        }
+
+        if(base_morph_index!=Model::nil) {
+            const Model::Morph& base_morph = model->GetMorph(base_morph_index);
+            for(size_t i=0;i<face_num;++i) {
+                if(i==base_morph_index) {
+                    continue;
+                }
+                Model::Morph &morph = model->GetMorph(i);
+                for(size_t j=0;j<morph.GetMorphDataNum();++j) {
+                    Model::Morph::MorphData::VertexMorph& vertex_morph_data = morph.GetMorphData(j).GetVertexMorph();
+                    size_t morph_data_vertex_index = vertex_morph_data.GetVertexIndex();
+                    vertex_morph_data.SetOffset(base_morph.GetMorphData(morph_data_vertex_index).GetVertexMorph().GetOffset()+vertex_morph_data.GetOffset());
+                    vertex_morph_data.SetVertexIndex(base_morph.GetMorphData(morph_data_vertex_index).GetVertexMorph().GetVertexIndex());
+                }
             }
         }
 
@@ -309,7 +352,6 @@ inline Model* PmdReader::Read(FileReader &file) const
             file.Read<std::uint8_t>();
         }
 
-        // Legacy model support: < 3.0, without English info
         // UNDONE
         if(file.GetRemainedLength()==0) {
             goto PMD_READER_READ_LEGACY_30;
@@ -320,13 +362,16 @@ inline Model* PmdReader::Read(FileReader &file) const
                 interprete::pmd_model_info info_en = file.Read<interprete::pmd_model_info>();
                 model->SetNameEn(ShiftJISToUTF16String(info_en.name));
                 model->SetDescriptionEn(ShiftJISToUTF16String(info_en.description));
-            
-                for(size_t i=0;i<model->GetBoneNum();++i) {
+
+                for(size_t i=0;i<bone_num;++i) {
                     Model::Bone& bone = model->GetBone(i);
                     bone.SetNameEn(ShiftJISToUTF16String(file.Read<mmd_string<20>>()));
                 }
 
-                for(size_t i=0;i<model->GetMorphNum();++i) {
+                if(model->GetMorphNum()>0) {
+                    model->GetMorph(0).SetNameEn(model->GetMorph(0).GetName());
+                }
+                for(size_t i=1;i<model->GetMorphNum();++i) {
                     Model::Morph& morph = model->GetMorph(i);
                     morph.SetNameEn(ShiftJISToUTF16String(file.Read<mmd_string<20>>()));
                 }
@@ -337,7 +382,7 @@ inline Model* PmdReader::Read(FileReader &file) const
                 }
             }
         }
-        // Legacy model support: < 3.0, with English info
+
         if(file.GetRemainedLength()==0) {
             goto PMD_READER_READ_LEGACY_30;
         }
@@ -345,15 +390,19 @@ inline Model* PmdReader::Read(FileReader &file) const
         {
             std::vector<const Texture*> custom_textures;
             for(size_t i=0;i<10;++i) {
-                custom_textures.push_back(&(registry.GetTexture(file_loc+ShiftJISToUTF16String(file.Read<mmd_string<100>>()))));
+                custom_textures.push_back(&(registry.GetTexture(ShiftJISToUTF16String(file.Read<mmd_string<100>>()), model_file_loc)));
             }
 
             for(size_t i=0;i<model->GetPartNum();++i) {
                 Material& material = model->GetPart(i).GetMaterial();
-                material.SetToon(custom_textures[toon_texture_ids[i]]);
+                if(toon_texture_ids[i]<10) {
+                    material.SetToon(custom_textures[toon_texture_ids[i]]);
+                } else {
+                    material.SetToon(&(registry.GetGlobalToon(Model::nil)));
+                }
             }
         }
-        // Legacy model support: < 5.0
+
         if(file.GetRemainedLength()==0) {
             goto PMD_READER_READ_LEGACY_50;
         }
@@ -364,19 +413,31 @@ inline Model* PmdReader::Read(FileReader &file) const
                 Model::RigidBody& rigid_body = model->NewRigidBody();
                 interprete::pmd_rigid_body rb = file.Read<interprete::pmd_rigid_body>();
                 rigid_body.SetName(ShiftJISToUTF16String(rb.name));
-                rigid_body.SetAssociatedBoneIndex(rb.bone_index);
+                if(rb.bone_index<bone_num) {
+                    rigid_body.SetAssociatedBoneIndex(rb.bone_index);
+                } else {
+                    if(center_bone_index==Model::nil) {
+                        rigid_body.SetAssociatedBoneIndex(0);
+                    } else {
+                        rigid_body.SetAssociatedBoneIndex(center_bone_index);
+                    }
+                }
                 rigid_body.SetCollisionGroup(rb.collision_group);
                 rigid_body.GetCollisionMask() = rb.collision_mask;
                 rigid_body.SetShape((Model::RigidBody::RigidBodyShape)rb.shape);
                 rigid_body.SetDimensions(rb.dimensions);
-                rigid_body.SetPosition(model->GetBone(rb.bone_index).GetPosition()+rb.position);
+                rigid_body.SetPosition(model->GetBone(rigid_body.GetAssociatedBoneIndex()).GetPosition()+rb.position);
                 rigid_body.SetRotation(rb.rotation);
                 rigid_body.SetMass(rb.mass);
                 rigid_body.SetTranslateDamp(rb.translate_damp);
                 rigid_body.SetRotateDamp(rb.rotate_damp);
                 rigid_body.SetRestitution(rb.restitution);
                 rigid_body.SetFriction(rb.friction);
-                rigid_body.SetType((Model::RigidBody::RigidBodyType)rb.type);
+                if(rb.bone_index<bone_num) {
+                    rigid_body.SetType((Model::RigidBody::RigidBodyType)rb.type);
+                } else {
+                    rigid_body.SetType(Model::RigidBody::RIGID_TYPE_PHYSICS_GHOST);
+                }
             }
         }
         {
@@ -405,7 +466,8 @@ PMD_READER_READ_LEGACY_30:
             material.SetToon(&(registry.GetGlobalToon(toon_texture_ids[i])));
         }
 PMD_READER_READ_LEGACY_50:
-PMD_READER_READ_SUCCEED:;
+PMD_READER_READ_SUCCEED:
+        model->Normalize();
     } catch(std::exception& e) {
         delete model;
         model = NULL;

@@ -18,32 +18,22 @@ inline TextureRegistry& MMDNG::GetTextureRegistry() {
     return texture_registry_;
 }
 
-inline NullPhysicsReactor& MMDNG::GetNullReactor() {
-    return null_reactor_;
-}
-
-inline Model* ReadModel(const std::string &filename) {
+inline Model* ReadModel(FileReader& file) {
     Model *model = NULL;
     try {
-        FileReader file(filename);
-        exception ex;
-        try {
+        ModelReader::ModelFormat format = ModelReader::GetModelFormat(file);
+        switch(format) {
+        case ModelReader::MODEL_TYPE_PMD:
             model = PmdReader().Read(file);
-        } catch (std::exception& e) {
-            ex.PrependMessage(e.what());
-        }
-
-        try {
+            break;
+        case ModelReader::MODEL_TYPE_PMX:
             model = PmxReader().Read(file);
-        } catch (std::exception& e) {
-            ex.PrependMessage(e.what());
-            throw ex;
+            break;
         }
     } catch (std::exception& e) {
         throw exception(std::string("ReadModel: Exception caught."), e);
     } catch (...) {
         throw exception(std::string("ReadModel: Non-standard exception caught."));
     }
-
     return model;
 }

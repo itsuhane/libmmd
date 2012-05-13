@@ -6,7 +6,7 @@
             http://www.boost.org/LICENSE_1_0.txt)
 **/
 
-const size_t nil = size_t(-1);
+const size_t Model::nil = size_t(-1);
 
 inline Model::SkinningOperator::SkinningType Model::SkinningOperator::GetSkinningType() const { return type_; }
 inline void Model::SkinningOperator::SetSkinningType(Model::SkinningOperator::SkinningType type) { type_ = type; }
@@ -187,7 +187,7 @@ inline const Model::Bone::IKLink& Model::Bone::GetIKLink(size_t index) const { r
 inline Model::Bone::IKLink& Model::Bone::GetIKLink(size_t index) { return ik_info_.ik_links_[index]; }
 inline Model::Bone::IKLink& Model::Bone::NewIKLink() {
     ik_info_.ik_links_.push_back(IKLink());
-    return *ik_info_.ik_links_.rbegin();
+    return ik_info_.ik_links_.back();
 }
 
 inline void Model::Bone::ClearIK() { ik_info_.ik_links_.clear(); has_ik_ = false; }
@@ -268,6 +268,12 @@ inline Model::Morph::MorphData::BoneMorph& Model::Morph::MorphData::GetBoneMorph
 inline Model::Morph::MorphData::UVMorph& Model::Morph::MorphData::GetUVMorph() { return uv_morph_; }
 inline Model::Morph::MorphData::MaterialMorph& Model::Morph::MorphData::GetMaterialMorph() { return material_morph_; }
 
+inline const Model::Morph::MorphData::GroupMorph& Model::Morph::MorphData::GetGroupMorph() const { return group_morph_; }
+inline const Model::Morph::MorphData::VertexMorph& Model::Morph::MorphData::GetVertexMorph() const { return vertex_morph_; }
+inline const Model::Morph::MorphData::BoneMorph& Model::Morph::MorphData::GetBoneMorph() const { return bone_morph_; }
+inline const Model::Morph::MorphData::UVMorph& Model::Morph::MorphData::GetUVMorph() const { return uv_morph_; }
+inline const Model::Morph::MorphData::MaterialMorph& Model::Morph::MorphData::GetMaterialMorph() const { return material_morph_; }
+
 inline const std::wstring& Model::Morph::GetName() const { return name_; }
 inline void Model::Morph::SetName(const std::wstring &name) { name_ = name; }
 inline const std::wstring& Model::Morph::GetNameEn() const { return name_en_; }
@@ -284,7 +290,7 @@ inline const Model::Morph::MorphData& Model::Morph::GetMorphData(size_t index) c
 inline Model::Morph::MorphData& Model::Morph::GetMorphData(size_t index) { return morph_data_[index]; }
 inline Model::Morph::MorphData& Model::Morph::NewMorphData() {
     morph_data_.push_back(Model::Morph::MorphData());
-    return *morph_data_.rbegin();
+    return morph_data_.back();
 }
 
 inline const std::wstring& Model::RigidBody::GetName() const { return name_; }
@@ -410,7 +416,7 @@ inline Vector3D<size_t>& Model::GetTriangle(size_t index) { return triangles_[in
 
 inline Vector3D<size_t>& Model::NewTriangle() {
     triangles_.push_back(Vector3D<size_t>());
-    return *triangles_.rbegin();
+    return triangles_.back();
 }
 
 inline size_t Model::GetPartNum() const { return parts_.size(); }
@@ -420,7 +426,7 @@ inline Model::Part& Model::GetPart(size_t index) { return parts_[index]; }
 
 inline Model::Part& Model::NewPart() {
     parts_.push_back(Part());
-    return *parts_.rbegin();
+    return parts_.back();
 }
 
 inline size_t Model::GetBoneNum() const { return bones_.size(); }
@@ -430,7 +436,7 @@ inline Model::Bone& Model::GetBone(size_t index) { return bones_[index]; }
 
 inline Model::Bone& Model::NewBone() {
     bones_.push_back(Bone());
-    return *bones_.rbegin();
+    return bones_.back();
 }
 
 inline const void* Model::GetCoordinatePointer() const {
@@ -451,7 +457,7 @@ inline const Model::Morph& Model::GetMorph(size_t index) const { return morphs_[
 inline Model::Morph& Model::GetMorph(size_t index) { return morphs_[index]; }
 inline Model::Morph& Model::NewMorph() {
     morphs_.push_back(Model::Morph());
-    return *morphs_.rbegin();
+    return morphs_.back();
 }
 
 inline size_t Model::GetRigidBodyNum() const { return rigid_bodies_.size(); }
@@ -459,7 +465,7 @@ inline const Model::RigidBody& Model::GetRigidBody(size_t index) const { return 
 inline Model::RigidBody& Model::GetRigidBody(size_t index) { return rigid_bodies_[index]; }
 inline Model::RigidBody& Model::NewRigidBody() {
     rigid_bodies_.push_back(Model::RigidBody());
-    return *rigid_bodies_.rbegin();
+    return rigid_bodies_.back();
 }
 
 inline size_t Model::GetConstraintNum() const { return constraints_.size(); }
@@ -467,5 +473,44 @@ inline const Model::Constraint& Model::GetConstraint(size_t index) const { retur
 inline Model::Constraint& Model::GetConstraint(size_t index) { return constraints_[index]; }
 inline Model::Constraint& Model::NewConstraint() {
     constraints_.push_back(Model::Constraint());
-    return *constraints_.rbegin();
+    return constraints_.back();
+}
+
+inline void Model::Normalize() {
+    for(std::vector<SkinningOperator>::iterator i=vertex_info_.skinning_operators_.begin();i!=vertex_info_.skinning_operators_.end();++i) {
+        switch(i->GetSkinningType()) {
+        case SkinningOperator::SKINNING_BDEF2:
+            {
+                float weight = i->GetBDEF2().GetBoneWeight();
+                if(weight==0.0f) {
+                    i->GetBDEF1().SetBoneID(i->GetBDEF2().GetBoneID(1));
+                    i->SetSkinningType(SkinningOperator::SKINNING_BDEF1);
+                } else if(weight==1.0f) {
+                    i->GetBDEF1().SetBoneID(i->GetBDEF2().GetBoneID(0));
+                    i->SetSkinningType(SkinningOperator::SKINNING_BDEF1);
+                }
+            }
+            break;
+        case SkinningOperator::SKINNING_SDEF:
+            {
+                size_t bone_0 = i->GetSDEF().GetBoneID(0);
+                size_t bone_1 = i->GetSDEF().GetBoneID(1);
+                float weight = i->GetSDEF().GetBoneWeight();
+                if((GetBone(bone_0).GetParentIndex()!=bone_1)&&(GetBone(bone_1).GetParentIndex()!=bone_0)) {
+                    if(weight==0.0f) {
+                        i->GetBDEF1().SetBoneID(i->GetBDEF2().GetBoneID(1));
+                        i->SetSkinningType(SkinningOperator::SKINNING_BDEF1);
+                    } else if(weight==1.0f) {
+                        i->GetBDEF1().SetBoneID(i->GetBDEF2().GetBoneID(0));
+                        i->SetSkinningType(SkinningOperator::SKINNING_BDEF1);
+                    } else {
+                        i->SetSkinningType(SkinningOperator::SKINNING_BDEF2);
+                    }
+                }
+            }
+            break;
+        case SkinningOperator::SKINNING_BDEF4:
+        default: break;
+        }
+    }
 }

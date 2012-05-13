@@ -203,7 +203,7 @@ namespace mmd {
             void SetUseLocalAxis(bool use_local_axis);
             void SetPostPhysics(bool post_physics);
             void SetReceiveTransform(bool receive_transform);
-            
+
             size_t GetChildIndex() const;
             void SetChildIndex(size_t child_index);
 
@@ -421,6 +421,12 @@ namespace mmd {
                 BoneMorph& GetBoneMorph();
                 UVMorph& GetUVMorph();
                 MaterialMorph& GetMaterialMorph();
+
+                const GroupMorph& GetGroupMorph() const;
+                const VertexMorph& GetVertexMorph() const;
+                const BoneMorph& GetBoneMorph() const;
+                const UVMorph& GetUVMorph() const;
+                const MaterialMorph& GetMaterialMorph() const;
             private:
                 GroupMorph group_morph_;
                 VertexMorph vertex_morph_;
@@ -473,9 +479,10 @@ namespace mmd {
             };
 
             enum RigidBodyType {
-                RIGID_TYPE_STATIC = 0x00,
-                RIGID_TYPE_DYNAMIC = 0x01,
-                RIGID_TYPE_DYNAMIC_FOLLOW = 0x02
+                RIGID_TYPE_KINEMATIC = 0x00,
+                RIGID_TYPE_PHYSICS = 0x01,
+                RIGID_TYPE_PHYSICS_STRICT = 0x02,
+                RIGID_TYPE_PHYSICS_GHOST = 0x03
             };
 
             const std::wstring& GetName() const;
@@ -526,7 +533,7 @@ namespace mmd {
 
             size_t collision_group_;
             std::bitset<16> collision_mask_;
-            
+
             RigidBodyShape shape_;
             Vector3f dimension_;
 
@@ -650,6 +657,11 @@ namespace mmd {
         const void* GetUVCoordPointer() const;
         const void* GetTrianglePointer() const;
 
+        bool Validate() const;
+        bool Validate(std::nothrow_t) const throw();
+
+        void Normalize();
+
         static const size_t nil;
     private:
         std::wstring name_en_;
@@ -665,7 +677,7 @@ namespace mmd {
             std::vector<std::vector<Vector4f>> extra_uv_coords_;
             std::vector<SkinningOperator> skinning_operators_;
             std::vector<float> edge_scales_;
-			Vector4f dummy_extra_uv_coord_;
+            Vector4f dummy_extra_uv_coord_;
         } vertex_info_;
         std::vector<Vector3D<size_t>> triangles_;
         std::vector<Part> parts_;

@@ -10,8 +10,15 @@ inline Texture::Texture(const std::wstring &texture_path) : texture_path_(textur
 inline const std::wstring& Texture::GetTexturePath() const { return texture_path_; }
 inline bool Texture::operator<(const Texture &texture) const { return texture_path_ <texture.texture_path_; }
 
-inline const Texture& TextureRegistry::GetTexture(const std::wstring &texture_path) {
-    std::pair<std::set<Texture>::iterator, bool> ret = registry_.insert(Texture(texture_path));
+inline const Texture& TextureRegistry::GetTexture(const std::wstring &texture_name, const std::wstring &model_location) {
+    std::pair<std::set<Texture>::iterator, bool> ret;
+    if(FileReader::FileExists(model_location+texture_name)) {
+        ret = registry_.insert(Texture(model_location+texture_name));
+    } else if(FileReader::FileExists(root_path_+texture_name)) {
+        ret = registry_.insert(Texture(root_path_+texture_name));
+    } else {
+        ret = registry_.insert(Texture(texture_name));
+    }
     return *ret.first;
 }
 

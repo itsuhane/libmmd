@@ -113,6 +113,27 @@ namespace mmd {
         Poser& operator=(Poser&);
     };
 
+    class MotionPlayer {
+    public:
+        MotionPlayer(const Motion& motion, Poser& poser);
+        void SeekFrame(size_t frame);
+        void SeekTime(double time);
+
+    private:
+        MotionPlayer& operator=(const MotionPlayer&);
+        class MotionModelMismatchTest {
+        public:
+            MotionModelMismatchTest(const Motion& motion);
+            bool operator()(const std::pair<std::wstring, size_t>& match_pair) const;
+        private:
+            const Motion* motion_;
+        };
+
+        std::vector<std::pair<std::wstring, size_t>> bone_map_;
+        const Motion& motion_;
+        Poser& poser_;
+    };
+
 #include "poser_impl.hxx"
 
 } /* End of namespace mmd */

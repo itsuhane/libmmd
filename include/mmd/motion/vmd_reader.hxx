@@ -15,7 +15,7 @@ namespace mmd {
 
     class VmdReader : public MotionReader {
     public:
-        virtual Motion* Read(FileReader &file) const;
+        /*virtual*/ Motion* Read(FileReader &file) const;
     };
 
 #include "vmd_reader_impl.hxx"

@@ -112,7 +112,17 @@ namespace mmd {
         struct pmd_raw_ik {
             interprete::pmd_ik_preamble preamble;
             std::vector<size_t> chain;
-            bool operator<(const pmd_raw_ik& ik) const { return chain[0]<ik.chain[0]; }
+            bool operator<(const pmd_raw_ik& ik) const {
+                size_t a = 0;
+                size_t b = 0;
+                if(chain.size()>0) {
+                    a = chain[0];
+                }
+                if(ik.chain.size()>0) {
+                    b = ik.chain[0];
+                }
+                return a<b;
+            }
         };
 
     } /* End of namespace interprete */

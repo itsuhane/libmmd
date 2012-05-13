@@ -6,6 +6,13 @@
             http://www.boost.org/LICENSE_1_0.txt)
 **/
 
+/**
+  Notes:
+    In together use with Windows API, <windef.h> has defined macro 'min' and 'max'.
+    This will result in conflict with STL.
+    You need to define NO_MINMAX for your preprocessor to avoid windef.h's definition.
+**/
+
 #ifndef __MMD_H_7F46DEA0A2C1F5902D557E3545B096B5_INCLUDED__
 #define __MMD_H_7F46DEA0A2C1F5902D557E3545B096B5_INCLUDED__
 
@@ -14,16 +21,15 @@
 #pragma warning( disable : 4100 4103 4189 4514 4571 4710 4819 4820 4996 )
 #endif
 
+#include "util/macro.hxx"
+
 #include <cmath>
+#include <cstddef>
 #include <cstdio>
 #include <cstring>
 
-#ifndef _MSC_VER
+#ifdef MMD_USE_CSTDINT
 #include <cstdint>
-#else
-#if _MSC_VER>=1600
-#include <cstdint>
-#endif
 #endif
 
 #include <algorithm>
@@ -37,6 +43,10 @@
 #include <vector>
 
 #include <exception>
+
+#ifndef MMD_WINDOWS
+#include <iconv.h>
+#endif
 
 #include "util/dwarf.hxx"
 #include "util/math.hxx"
@@ -63,11 +73,9 @@ namespace mmd {
     public:
         static MMDNG& GetMMDNG();
         TextureRegistry& GetTextureRegistry();
-        NullPhysicsReactor& GetNullReactor();
     private:
         MMDNG();
         TextureRegistry texture_registry_;
-        NullPhysicsReactor null_reactor_;
     };
 }
 
@@ -79,7 +87,7 @@ namespace mmd {
 #include "motion/vmd_reader.hxx"
 
 namespace mmd {
-    Model* ReadModel(const std::string &filename);
+    Model* ReadModel(FileReader& file);
 #include "mmd_facility_impl.hxx"
 } /* End of namespace mmd */
 

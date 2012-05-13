@@ -15,7 +15,7 @@ namespace mmd {
 
     class PmxReader : public ModelReader {
     public:
-        virtual Model* Read(FileReader &file) const;
+        /*virtual*/ Model* Read(FileReader &file) const;
     };
 
 #include "pmx_reader_impl.hxx"

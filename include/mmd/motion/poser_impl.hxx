@@ -6,6 +6,13 @@
             http://www.boost.org/LICENSE_1_0.txt)
 **/
 
+/**
+  Reference:
+    ik.txt & ikx.txt
+      - Possibly original implementation in MMD, released by Higuchi Yu.
+        Listed at VPVP wiki, MMD Related Libraries:
+          http://www6.atwiki.jp/vpvpwiki/pages/288.html
+**/
 inline Poser::Poser(Model &model) : model_(model) {
     size_t vertex_num = model_.GetVertexNum();
     pose_image.coordinates.insert(pose_image.coordinates.end(), vertex_num, Vector3f());
@@ -350,6 +357,24 @@ inline void Poser::Deform() {
             }
             break;
         //case Model::SkinningOperator::SKINNING_SDEF:
+        //    {
+        //        const Matrix4f &mat_0 = bone_images_[op.GetSDEF().GetBoneID(0)].skinning_matrix_;
+        //        const Matrix4f &mat_1 = bone_images_[op.GetSDEF().GetBoneID(1)].skinning_matrix_;
+        //        const Vector3f &c = op.GetSDEF().GetC();
+        //        const Vector3f &r0 = op.GetSDEF().GetR0();
+        //        const Vector3f &r1 = op.GetSDEF().GetR1();
+        //        float weight = op.GetSDEF().GetBoneWeight();
+        //        Vector3f rr0 = transform(r0, mat_0);
+        //        Vector3f rr1 = transform(r1, mat_1);
+        //        Vector3f nc0 = transform(c, mat_0);
+        //        Vector3f nc1 = transform(c, mat_1);
+        //        Vector3f lr = Lerp(rr1, rr0)[weight];
+        //        Vector3f nc = Lerp(nc1, nc0)[weight];
+        //        Vector3f rc = lr;
+        //        Matrix4f mat = SLerp(Quaternionf::Identity(), bone_images_[op.GetSDEF().GetBoneID(1)].total_rotation_.q)[weight].ToRotateMatrix()*bone_images_[op.GetSDEF().GetBoneID(0)].local_matrix_;
+        //        pose_image.coordinates[i] = rotate(coordinate-c, mat)+rc;
+        //        pose_image.normals[i] = rotate(normal, mat);
+        //    }
         //    break;
         // UNDONE
         }
@@ -392,4 +417,31 @@ inline bool Poser::BoneImage::TransformOrder::operator()(size_t a, size_t b) con
     } else {
         return a<b;
     }
+}
+
+MotionPlayer::MotionPlayer(const Motion& motion, Poser& poser) : motion_(motion), poser_(poser) {
+    const Model& model = poser_.GetModel();
+    for(size_t i=0;i<model.GetBoneNum();++i) {
+        bone_map_.push_back(std::make_pair(model.GetBone(i).GetName(), i));
+    }
+    MotionModelMismatchTest test(motion_);
+    std::vector<std::pair<std::wstring, size_t>>::iterator iend = std::remove_if(bone_map_.begin(), bone_map_.end(), test);
+    bone_map_.erase(iend, bone_map_.end());
+}
+
+void MotionPlayer::SeekFrame(size_t frame) {
+    for(std::vector<std::pair<std::wstring, size_t>>::iterator i=bone_map_.begin();i!=bone_map_.end();++i) {
+        poser_.SetBonePose(i->second, motion_.GetBoneMotion(i->first, frame));
+    }
+}
+
+void MotionPlayer::SeekTime(double time) {
+    for(std::vector<std::pair<std::wstring, size_t>>::iterator i=bone_map_.begin();i!=bone_map_.end();++i) {
+        poser_.SetBonePose(i->second, motion_.GetBoneMotion(i->first, time));
+    }
+}
+
+MotionPlayer::MotionModelMismatchTest::MotionModelMismatchTest(const Motion& motion) : motion_(&motion) {}
+bool MotionPlayer::MotionModelMismatchTest::operator()(const std::pair<std::wstring, size_t>& match_pair) const {
+    return !motion_->IsBoneRegistered(match_pair.first);
 }

@@ -21,6 +21,10 @@ inline Motion::BoneKeyframe::interpolator_type& Motion::BoneKeyframe::GetZInterp
 inline const Motion::BoneKeyframe::interpolator_type& Motion::BoneKeyframe::GetRInterpolator() const { return r_interpolator_; }
 inline Motion::BoneKeyframe::interpolator_type& Motion::BoneKeyframe::GetRInterpolator() { return r_interpolator_; }
 
+inline bool Motion::IsBoneRegistered(const std::wstring& bone_name) const {
+    return (bone_motions_.count(bone_name)>0);
+}
+
 inline const std::wstring& Motion::GetName() const { return name_; }
 inline void Motion::SetName(const std::wstring &name) { name_ = name; }
 
