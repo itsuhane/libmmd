@@ -1,0 +1,75 @@
+
+/**
+             Copyright itsuhane@gmail.com, 2012.
+  Distributed under the Boost Software License, Version 1.0.
+      (See accompanying file LICENSE_1_0.txt or copy at
+            http://www.boost.org/LICENSE_1_0.txt)
+**/
+
+inline Motion* VmdReader::Read(FileReader &file) const {
+    Motion *motion = NULL;
+    try {
+        motion = new Motion();
+        
+        file.Reset();
+
+        interprete::vmd_header header = file.Read<interprete::vmd_header>();
+
+        std::string magic = header.magic;
+        if(magic!="Vocaloid Motion Data 0002") {
+            throw exception(std::string("VmdReader: File is not a VMD file."));
+        }
+
+        motion->SetName(ShiftJISToUTF16String(header.name));
+
+        size_t bone_motion_num = file.Read<std::uint32_t>();
+
+        for(size_t i=0;i<bone_motion_num;++i) {
+            interprete::vmd_bone b = file.Read<interprete::vmd_bone>();
+            Motion::BoneKeyframe &keyframe = motion->GetBoneKeyframe(ShiftJISToUTF16String(b.bone_name), b.nframe);
+            keyframe.SetTranslation(b.translation);
+            keyframe.SetRotation(b.rotation);
+
+            Vector2f c_0, c_1;
+            const float r = 1.0f/127.0f;
+
+            c_0.p.x = b.x_interpolator[0]*r;
+            c_0.p.y = b.x_interpolator[4]*r;
+            c_1.p.x = b.x_interpolator[8]*r;
+            c_1.p.y = b.x_interpolator[12]*r;
+            Motion::BoneKeyframe::interpolator_type &x_interpolator = keyframe.GetXInterpolator();
+            x_interpolator.SetC(c_0, c_1);
+
+            c_0.p.x = b.y_interpolator[0]*r;
+            c_0.p.y = b.y_interpolator[4]*r;
+            c_1.p.x = b.y_interpolator[8]*r;
+            c_1.p.y = b.y_interpolator[12]*r;
+            Motion::BoneKeyframe::interpolator_type &y_interpolator = keyframe.GetYInterpolator();
+            y_interpolator.SetC(c_0, c_1);
+
+            c_0.p.x = b.z_interpolator[0]*r;
+            c_0.p.y = b.z_interpolator[4]*r;
+            c_1.p.x = b.z_interpolator[8]*r;
+            c_1.p.y = b.z_interpolator[12]*r;
+            Motion::BoneKeyframe::interpolator_type &z_interpolator = keyframe.GetZInterpolator();
+            z_interpolator.SetC(c_0, c_1);
+
+            c_0.p.x = b.r_interpolator[0]*r;
+            c_0.p.y = b.r_interpolator[4]*r;
+            c_1.p.x = b.r_interpolator[8]*r;
+            c_1.p.y = b.r_interpolator[12]*r;
+            Motion::BoneKeyframe::interpolator_type &r_interpolator = keyframe.GetRInterpolator();
+            r_interpolator.SetC(c_0, c_1);
+        }
+
+    } catch(std::exception& e) {
+        delete motion;
+        motion = NULL;
+        throw exception(std::string("VmdReader: Exception caught."), e);
+    } catch(...) {
+        delete motion;
+        motion = NULL;
+        throw exception(std::string("VmdReader: Non-standard exception caught."));
+    }
+    return motion;
+}
