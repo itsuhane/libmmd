@@ -6,6 +6,11 @@
             http://www.boost.org/LICENSE_1_0.txt)
 **/
 
+/**
+  Be awared that though indices are using type of size_t, it is impossible
+  to use vertices more than number of 2^32-1, even on 64-bit systems.
+**/
+
 #ifndef __MODEL_HXX_4E94485D41E693D8A85A55A8383064F3_INCLUDED__
 #define __MODEL_HXX_4E94485D41E693D8A85A55A8383064F3_INCLUDED__
 
@@ -623,9 +628,9 @@ namespace mmd {
         Vertex<ref> NewVertex();
 
         size_t GetTriangleNum() const;
-        const Vector3D<size_t>& GetTriangle(size_t index) const;
-        Vector3D<size_t>& GetTriangle(size_t index);
-        Vector3D<size_t>& NewTriangle();
+        const Vector3D<std::uint32_t>& GetTriangle(size_t index) const;
+        Vector3D<std::uint32_t>& GetTriangle(size_t index);
+        Vector3D<std::uint32_t>& NewTriangle();
 
         size_t GetPartNum() const;
         const Part& GetPart(size_t index) const;
@@ -652,10 +657,10 @@ namespace mmd {
         Constraint& GetConstraint(size_t index);
         Constraint& NewConstraint();
 
-        const void* GetCoordinatePointer() const;
-        const void* GetNormalPointer() const;
-        const void* GetUVCoordPointer() const;
-        const void* GetTrianglePointer() const;
+        const float* GetCoordinatePointer() const;
+        const float* GetNormalPointer() const;
+        const float* GetUVCoordPointer() const;
+        const std::uint32_t* GetTrianglePointer() const;
 
         bool Validate() const;
         bool Validate(std::nothrow_t) const throw();
@@ -679,7 +684,7 @@ namespace mmd {
             std::vector<float> edge_scales_;
             Vector4f dummy_extra_uv_coord_;
         } vertex_info_;
-        std::vector<Vector3D<size_t>> triangles_;
+        std::vector<Vector3D<std::uint32_t>> triangles_;
         std::vector<Part> parts_;
         std::vector<Bone> bones_;
         std::vector<Morph> morphs_;

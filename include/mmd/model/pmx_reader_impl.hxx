@@ -94,9 +94,9 @@ inline Model* PmxReader::Read(FileReader &file) const {
 
         size_t triangle_num = (size_t)file.Read<std::int32_t>()/3;
         for(size_t i=0;i<triangle_num;++i) {
-            Vector3D<size_t> &triangle = model->NewTriangle();
+            Vector3D<std::uint32_t> &triangle = model->NewTriangle();
             for(size_t j=0;j<3;++j) {
-                triangle.v[j] = file.ReadIndex(vertex_index_size);
+                triangle.v[j] = (std::uint32_t)file.ReadIndex(vertex_index_size);
             }
         }
 

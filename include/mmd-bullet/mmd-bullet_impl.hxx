@@ -229,7 +229,7 @@ inline void BulletPhysicsReactor::AddPoser(Poser& poser) {
         bt_constraint->setAngularLowerLimit(btVector3(rotation_low_limit.p.x, rotation_low_limit.p.y, rotation_low_limit.p.z));
         bt_constraint->setAngularUpperLimit(btVector3(rotation_high_limit.p.x, rotation_high_limit.p.y, rotation_high_limit.p.z));
 
-        for(size_t i=0;i<3;++i) {
+        for(int i=0;i<3;++i) {
             bt_constraint->setStiffness(i, constraint.GetSpringTranslate().v[i]);
             bt_constraint->enableSpring(i, true);
             bt_constraint->setStiffness(i+3, constraint.GetSpringRotate().v[i]);

@@ -412,10 +412,11 @@ inline Model::Vertex<ref> Model::NewVertex() {
 
 inline size_t Model::GetTriangleNum() const { return triangles_.size(); }
 
-inline Vector3D<size_t>& Model::GetTriangle(size_t index) { return triangles_[index]; }
+inline const Vector3D<std::uint32_t>& Model::GetTriangle(size_t index) const { return triangles_[index]; }
+inline Vector3D<std::uint32_t>& Model::GetTriangle(size_t index) { return triangles_[index]; }
 
-inline Vector3D<size_t>& Model::NewTriangle() {
-    triangles_.push_back(Vector3D<size_t>());
+inline Vector3D<std::uint32_t>& Model::NewTriangle() {
+    triangles_.push_back(Vector3D<std::uint32_t>());
     return triangles_.back();
 }
 
@@ -439,17 +440,17 @@ inline Model::Bone& Model::NewBone() {
     return bones_.back();
 }
 
-inline const void* Model::GetCoordinatePointer() const {
-    return &vertex_info_.coordinates_[0];
+inline const float* Model::GetCoordinatePointer() const {
+    return &vertex_info_.coordinates_[0].v[0];
 }
-inline const void* Model::GetNormalPointer() const {
-    return &vertex_info_.normals_[0];
+inline const float* Model::GetNormalPointer() const {
+    return &vertex_info_.normals_[0].v[0];
 }
-inline const void* Model::GetUVCoordPointer() const {
-    return &vertex_info_.uv_coords_[0];
+inline const float* Model::GetUVCoordPointer() const {
+    return &vertex_info_.uv_coords_[0].v[0];
 }
-inline const void* Model::GetTrianglePointer() const {
-    return &triangles_[0];
+inline const std::uint32_t* Model::GetTrianglePointer() const {
+    return &triangles_[0].v[0];
 }
 
 inline size_t Model::GetMorphNum() const { return morphs_.size(); }

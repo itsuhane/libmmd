@@ -49,7 +49,7 @@ inline Model* PmdReader::Read(FileReader &file) const
 
         size_t triangle_num = file.Read<std::uint32_t>()/3;
         for(size_t i=0;i<triangle_num;++i) {
-            Vector3D<size_t> &triangle = model->NewTriangle();
+            Vector3D<std::uint32_t> &triangle = model->NewTriangle();
             for(size_t j=0;j<3;++j) {
                 triangle.v[j] = file.Read<std::uint16_t>();
             }
