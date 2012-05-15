@@ -211,7 +211,7 @@ inline Model* PmdReader::Read(FileReader &file) const
 
             if(bone.IsRotAxisFixed()) {
                 size_t child_id = raw_bone.child_id;
-                if(child_id<0||child_id>=bone_num) {
+                if(child_id>=bone_num) {
                     child_id = 0;
                 }
                 bone.SetRotAxis((raw_bones[child_id].position-bone.GetPosition()).Normalize());
