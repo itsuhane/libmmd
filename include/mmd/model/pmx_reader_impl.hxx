@@ -312,13 +312,16 @@ inline Model* PmxReader::Read(FileReader &file) const {
             std::wstring entry_item_name = file.ReadString(utf8_encoding);
             std::wstring entry_item_name_en = file.ReadString(utf8_encoding);
             bool is_special = (file.Read<std::uint8_t>()==1);
+            _unused(is_special);
             size_t element_num = (size_t)file.Read<std::int32_t>();
             for(size_t j=0;j<element_num;++j) {
                 bool is_morph = (file.Read<std::uint8_t>()==1);
                 if(is_morph) {
                     size_t morph_index = file.ReadIndex(morph_index_size);
+                    _unused(morph_index);
                 } else {
                     size_t bone_index = file.ReadIndex(bone_index_size);
+                    _unused(bone_index);
                 }
             }
         }

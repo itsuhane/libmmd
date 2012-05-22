@@ -33,4 +33,8 @@
 #define MMD_HAS_EXPERIMENTAL_CXX0X
 #endif
 
+#ifndef _unused
+#define _unused(x) ((void)x)
+#endif
+
 #endif /* __MACRO_HXX_9D858C264DDD1162ECC2FD3FA20D5B09_INCLUDED__ */
