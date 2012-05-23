@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core-msvc-bare-test", "core-msvc-bare-test\core-msvc-bare-test.vcproj", "{551E58B4-94D5-469D-82F7-56ADCA8F554A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{551E58B4-94D5-469D-82F7-56ADCA8F554A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{551E58B4-94D5-469D-82F7-56ADCA8F554A}.Debug|Win32.Build.0 = Debug|Win32
+		{551E58B4-94D5-469D-82F7-56ADCA8F554A}.Release|Win32.ActiveCfg = Release|Win32
+		{551E58B4-94D5-469D-82F7-56ADCA8F554A}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

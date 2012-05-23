@@ -13,3 +13,8 @@
 *.la
 *.a
 *.lib
+
+# Visual Studio project files
+*.suo
+*.user
+*.ncb
