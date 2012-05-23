@@ -1,6 +1,6 @@
-TARGET = bullet-gcc-bare-test.o
+TARGET = bullet-clang-bare-test.o
 SOURCE = main.cc
-CXX = g++
+CXX = clang++
 CPP_FLAGS = -I../../include
 CXX_FLAGS = -std=c++11 -pedantic -Wall
 test : build clean
