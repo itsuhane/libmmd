@@ -8,6 +8,6 @@ build : $(TARGET)
 clean :
 	-rm $(TARGET)
 $(TARGET) : $(SOURCE)
-	$(CXX) $(CPP_FLAGS) $(CXX_FLAGS) -o $(TARGET) $(SOURCE)
+	$(CXX) $(CPP_FLAGS) $(CXX_FLAGS) -o $(TARGET) -c $(SOURCE)
 .PHONY : build clean test
 .DEFAULT: test
