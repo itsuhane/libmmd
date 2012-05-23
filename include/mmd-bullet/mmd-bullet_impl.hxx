@@ -9,9 +9,9 @@
 inline BulletPhysicsReactor::PoserMotionState::PoserMotionState(Poser& poser, const Model::RigidBody& body, const btTransform& body_transform)
   : poser_(poser),
     target_(BulletPhysicsReactor::GetPoserBoneImage(poser, body.GetAssociatedBoneIndex())),
+    passive_(body.GetType()==Model::RigidBody::RIGID_TYPE_KINEMATIC),
     strict_(body.GetType()==Model::RigidBody::RIGID_TYPE_PHYSICS_STRICT),
     ghost_(body.GetType()==Model::RigidBody::RIGID_TYPE_PHYSICS_GHOST),
-    passive_(body.GetType()==Model::RigidBody::RIGID_TYPE_KINEMATIC),
     body_transform_(body_transform),
     body_transform_inv_(body_transform.inverse())
 {
