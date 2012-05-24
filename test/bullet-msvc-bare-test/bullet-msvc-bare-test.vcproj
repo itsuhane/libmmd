@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../include;../../libs/bullet/src"
+				AdditionalIncludeDirectories="../../include;&quot;%BULLET_PATH%/src&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -111,7 +111,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="../../include;../../libs/bullet/src"
+				AdditionalIncludeDirectories="../../include;&quot;%BULLET_PATH%/src&quot;"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				DisableLanguageExtensions="true"
