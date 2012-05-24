@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="core-msvc-bare-test"
-	ProjectGUID="{551E58B4-94D5-469D-82F7-56ADCA8F554A}"
-	RootNamespace="coremsvcbaretest"
+	Name="bullet-msvc-bare-test"
+	ProjectGUID="{0C8EDE15-F056-4DD9-B8FD-4A515CB5B716}"
+	RootNamespace="bulletmsvcbaretest"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>

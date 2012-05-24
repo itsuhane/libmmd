@@ -18,6 +18,16 @@
 
 #ifdef _MSC_VER
 #pragma warning( push )
+/*
+  Some compile warnings are intentionally disabled for MSVC:
+    C4100 :
+      "'xxx': unreferenced formal parameter"
+    C4103 :
+      "alignment changed after including header, maybe due to missing #pragma pack(pop)"
+      This warning is generated due to the use of packing directives with "pack.hxx" and "unpack.hxx"
+    C4996 :
+      "'xxx': This function or variable may be unsafe. Consider using xxx instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details."
+*/
 #pragma warning( disable : 4100 4103 4189 4514 4571 4710 4819 4820 4996 )
 #endif
 
