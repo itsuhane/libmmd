@@ -454,8 +454,8 @@ HRESULT validate_data()
         return E_FAIL;
     }
 
-    if( FAILED( D3DXCreateMeshFVF( model->GetTriangleNum(),
-        model->GetVertexNum(),
+    if( FAILED( D3DXCreateMeshFVF( (DWORD)model->GetTriangleNum(),
+        (DWORD)model->GetVertexNum(),
         D3DXMESH_32BIT|D3DXMESH_MANAGED, VERTEX::FVF_Flags, 
         g_pd3dDevice, &g_pMesh ) ) )
     {
