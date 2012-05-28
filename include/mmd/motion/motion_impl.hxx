@@ -5,6 +5,12 @@
       (See accompanying file LICENSE_1_0.txt or copy at
             http://www.boost.org/LICENSE_1_0.txt)
 **/
+inline Motion::BoneMotion::BoneMotion(const Vector3f& translation, const Vector4f& rotation) : translation_(translation), rotation_(rotation) {}
+inline const Vector3f& Motion::BoneMotion::GetTranslation() const { return translation_; }
+inline const Vector4f& Motion::BoneMotion::GetRotation() const { return rotation_; }
+
+inline Motion::MorphMotion::MorphMotion(float weight) : weight_(weight) {}
+inline float inline Motion::MorphMotion::GetWeight() const { return weight_; }
 
 inline const Vector3f& Motion::BoneKeyframe::GetTranslation() const { return translation_; }
 inline void Motion::BoneKeyframe::SetTranslation(const Vector3f &translation) { translation_ = translation; }
@@ -21,8 +27,18 @@ inline Motion::BoneKeyframe::interpolator_type& Motion::BoneKeyframe::GetZInterp
 inline const Motion::BoneKeyframe::interpolator_type& Motion::BoneKeyframe::GetRInterpolator() const { return r_interpolator_; }
 inline Motion::BoneKeyframe::interpolator_type& Motion::BoneKeyframe::GetRInterpolator() { return r_interpolator_; }
 
+inline float Motion::MorphKeyframe::GetWeight() const { return weight_; }
+inline void Motion::MorphKeyframe::SetWeight(float weight) { weight_ = weight; }
+
+inline const Motion::MorphKeyframe::interpolator_type& Motion::MorphKeyframe::GetWeightInterpolator() const { return w_interpolator_; }
+inline Motion::MorphKeyframe::interpolator_type& Motion::MorphKeyframe::GetWeightInterpolator() { return w_interpolator_; }
+
 inline bool Motion::IsBoneRegistered(const std::wstring& bone_name) const {
     return (bone_motions_.count(bone_name)>0);
+}
+
+inline bool Motion::IsMorphRegistered(const std::wstring& morph_name) const {
+    return (morph_motions_.count(morph_name)>0);
 }
 
 inline const std::wstring& Motion::GetName() const { return name_; }
@@ -34,6 +50,14 @@ inline const Motion::BoneKeyframe& Motion::GetBoneKeyframe(const std::wstring &b
 
 inline Motion::BoneKeyframe& Motion::GetBoneKeyframe(const std::wstring &bone_name, size_t frame) {
     return bone_motions_[bone_name][frame];
+}
+
+inline const Motion::MorphKeyframe& Motion::GetMorphKeyframe(const std::wstring &morph_name, size_t frame) const {
+    return morph_motions_.find(morph_name)->second.find(frame)->second;
+}
+
+inline Motion::MorphKeyframe& Motion::GetMorphKeyframe(const std::wstring &morph_name, size_t frame) {
+    return morph_motions_[morph_name][frame];
 }
 
 inline const Motion::BoneMotion Motion::GetBoneMotion(const std::wstring &bone_name, size_t frame) const {

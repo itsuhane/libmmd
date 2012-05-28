@@ -29,6 +29,12 @@ namespace mmd {
             std::int8_t z_interpolator[16];
             std::int8_t r_interpolator[16];
         };
+
+        struct PACKED vmd_morph {
+            mmd_string<15> morph_name;
+            std::uint32_t nframe;
+            float weight;
+        };
 #include "../../util/unpack.hxx"
 
     } /* End of namespace interprete */

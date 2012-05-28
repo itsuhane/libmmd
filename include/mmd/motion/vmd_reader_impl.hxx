@@ -62,6 +62,14 @@ inline Motion* VmdReader::Read(FileReader &file) const {
             r_interpolator.SetC(c_0, c_1);
         }
 
+        size_t morph_motion_num = file.Read<std::uint32_t>();
+        
+        for(size_t i=0;i<morph_motion_num;++i) {
+            interprete::vmd_morph m = file.Read<interprete::vmd_morph>();
+            Motion::MorphKeyframe &keyframe = motion->GetMorphKeyframe(ShiftJISToUTF16String(m.morph_name), m.nframe);
+            keyframe.SetWeight(m.weight);
+        }
+
     } catch(std::exception& e) {
         delete motion;
         motion = NULL;

@@ -419,7 +419,7 @@ inline bool Poser::BoneImage::TransformOrder::operator()(size_t a, size_t b) con
     }
 }
 
-MotionPlayer::MotionPlayer(const Motion& motion, Poser& poser) : motion_(motion), poser_(poser) {
+inline MotionPlayer::MotionPlayer(const Motion& motion, Poser& poser) : motion_(motion), poser_(poser) {
     const Model& model = poser_.GetModel();
     for(size_t i=0;i<model.GetBoneNum();++i) {
         bone_map_.push_back(std::make_pair(model.GetBone(i).GetName(), i));
@@ -429,19 +429,19 @@ MotionPlayer::MotionPlayer(const Motion& motion, Poser& poser) : motion_(motion)
     bone_map_.erase(iend, bone_map_.end());
 }
 
-void MotionPlayer::SeekFrame(size_t frame) {
+inline void MotionPlayer::SeekFrame(size_t frame) {
     for(std::vector<std::pair<std::wstring, size_t>>::iterator i=bone_map_.begin();i!=bone_map_.end();++i) {
         poser_.SetBonePose(i->second, motion_.GetBoneMotion(i->first, frame));
     }
 }
 
-void MotionPlayer::SeekTime(double time) {
+inline void MotionPlayer::SeekTime(double time) {
     for(std::vector<std::pair<std::wstring, size_t>>::iterator i=bone_map_.begin();i!=bone_map_.end();++i) {
         poser_.SetBonePose(i->second, motion_.GetBoneMotion(i->first, time));
     }
 }
 
-MotionPlayer::MotionModelMismatchTest::MotionModelMismatchTest(const Motion& motion) : motion_(&motion) {}
-bool MotionPlayer::MotionModelMismatchTest::operator()(const std::pair<std::wstring, size_t>& match_pair) const {
+inline MotionPlayer::MotionModelMismatchTest::MotionModelMismatchTest(const Motion& motion) : motion_(&motion) {}
+inline bool MotionPlayer::MotionModelMismatchTest::operator()(const std::pair<std::wstring, size_t>& match_pair) const {
     return !motion_->IsBoneRegistered(match_pair.first);
 }
