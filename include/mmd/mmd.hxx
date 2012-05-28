@@ -101,7 +101,7 @@ namespace mmd {
 #include "mmd_facility_impl.hxx"
     namespace {
         const MMD& mmd = MMD::GetMMD();
-    };
+    }
 } /* End of namespace mmd */
 
 #ifdef _MSC_VER

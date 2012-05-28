@@ -48,7 +48,6 @@ inline int RECTHEIGHT(const RECT &rc)
 ModelPreviewHandler::ModelPreviewHandler() : m_cRef(1), m_pStream(NULL), m_hwndParent(NULL), m_hwndPreview(NULL), m_punkSite(NULL)
 {
     InterlockedIncrement(&g_cDllRef);
-    mmd::MMDNG::GetMMDNG();
 }
 
 ModelPreviewHandler::~ModelPreviewHandler()
