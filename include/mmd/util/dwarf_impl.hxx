@@ -6,6 +6,9 @@
             http://www.boost.org/LICENSE_1_0.txt)
 **/
 
+template<typename T>
+inline T& make_null_ref() { return *reinterpret_cast<T*>(NULL); }
+
 inline exception::exception() {}
 inline exception::exception(const std::string& message) : msg_(message) {}
 inline exception::exception(const std::exception& e) : msg_(e.what()) {}

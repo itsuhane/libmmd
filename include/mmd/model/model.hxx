@@ -682,8 +682,8 @@ namespace mmd {
             std::vector<std::vector<Vector4f>> extra_uv_coords_;
             std::vector<SkinningOperator> skinning_operators_;
             std::vector<float> edge_scales_;
-            Vector4f dummy_extra_uv_coord_;
         } vertex_info_;
+
         std::vector<Vector3D<std::uint32_t>> triangles_;
         std::vector<Part> parts_;
         std::vector<Bone> bones_;

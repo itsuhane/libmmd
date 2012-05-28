@@ -389,13 +389,13 @@ inline Model::Vertex<ref> Model::GetVertex(size_t index) {
     switch(GetExtraUVNumber()) {
     default:
     case 0:
-        return Model::Vertex<ref>(vertex_info_.coordinates_[index], vertex_info_.normals_[index], vertex_info_.uv_coords_[index], vertex_info_.dummy_extra_uv_coord_, vertex_info_.dummy_extra_uv_coord_, vertex_info_.dummy_extra_uv_coord_, vertex_info_.dummy_extra_uv_coord_, vertex_info_.skinning_operators_[index], vertex_info_.edge_scales_[index]);
+        return Model::Vertex<ref>(vertex_info_.coordinates_[index], vertex_info_.normals_[index], vertex_info_.uv_coords_[index], make_null_ref<Vector4f>(), make_null_ref<Vector4f>(), make_null_ref<Vector4f>(), make_null_ref<Vector4f>(), vertex_info_.skinning_operators_[index], vertex_info_.edge_scales_[index]);
     case 1:
-        return Model::Vertex<ref>(vertex_info_.coordinates_[index], vertex_info_.normals_[index], vertex_info_.uv_coords_[index], vertex_info_.extra_uv_coords_[0][index], vertex_info_.dummy_extra_uv_coord_, vertex_info_.dummy_extra_uv_coord_, vertex_info_.dummy_extra_uv_coord_, vertex_info_.skinning_operators_[index], vertex_info_.edge_scales_[index]);
+        return Model::Vertex<ref>(vertex_info_.coordinates_[index], vertex_info_.normals_[index], vertex_info_.uv_coords_[index], vertex_info_.extra_uv_coords_[0][index], make_null_ref<Vector4f>(), make_null_ref<Vector4f>(), make_null_ref<Vector4f>(), vertex_info_.skinning_operators_[index], vertex_info_.edge_scales_[index]);
     case 2:
-        return Model::Vertex<ref>(vertex_info_.coordinates_[index], vertex_info_.normals_[index], vertex_info_.uv_coords_[index], vertex_info_.extra_uv_coords_[0][index], vertex_info_.extra_uv_coords_[1][index], vertex_info_.dummy_extra_uv_coord_, vertex_info_.dummy_extra_uv_coord_, vertex_info_.skinning_operators_[index], vertex_info_.edge_scales_[index]);
+        return Model::Vertex<ref>(vertex_info_.coordinates_[index], vertex_info_.normals_[index], vertex_info_.uv_coords_[index], vertex_info_.extra_uv_coords_[0][index], vertex_info_.extra_uv_coords_[1][index], make_null_ref<Vector4f>(), make_null_ref<Vector4f>(), vertex_info_.skinning_operators_[index], vertex_info_.edge_scales_[index]);
     case 3:
-        return Model::Vertex<ref>(vertex_info_.coordinates_[index], vertex_info_.normals_[index], vertex_info_.uv_coords_[index], vertex_info_.extra_uv_coords_[0][index], vertex_info_.extra_uv_coords_[1][index], vertex_info_.extra_uv_coords_[2][index], vertex_info_.dummy_extra_uv_coord_, vertex_info_.skinning_operators_[index], vertex_info_.edge_scales_[index]);
+        return Model::Vertex<ref>(vertex_info_.coordinates_[index], vertex_info_.normals_[index], vertex_info_.uv_coords_[index], vertex_info_.extra_uv_coords_[0][index], vertex_info_.extra_uv_coords_[1][index], vertex_info_.extra_uv_coords_[2][index], make_null_ref<Vector4f>(), vertex_info_.skinning_operators_[index], vertex_info_.edge_scales_[index]);
     case 4:
         return Model::Vertex<ref>(vertex_info_.coordinates_[index], vertex_info_.normals_[index], vertex_info_.uv_coords_[index], vertex_info_.extra_uv_coords_[0][index], vertex_info_.extra_uv_coords_[1][index], vertex_info_.extra_uv_coords_[2][index], vertex_info_.extra_uv_coords_[3][index], vertex_info_.skinning_operators_[index], vertex_info_.edge_scales_[index]);
     }

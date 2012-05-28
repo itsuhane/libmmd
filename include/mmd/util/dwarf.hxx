@@ -31,9 +31,17 @@ namespace mmd {
     };
 
     template<typename T>
+    struct cref {
+        typedef const T& type;
+    };
+
+    template<typename T>
     struct val {
         typedef T type;
     };
+
+    template<typename T>
+    T& make_null_ref();
 
     class exception : public std::exception
     {
