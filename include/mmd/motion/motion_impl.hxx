@@ -10,7 +10,7 @@ inline const Vector3f& Motion::BoneMotion::GetTranslation() const { return trans
 inline const Vector4f& Motion::BoneMotion::GetRotation() const { return rotation_; }
 
 inline Motion::MorphMotion::MorphMotion(float weight) : weight_(weight) {}
-inline float inline Motion::MorphMotion::GetWeight() const { return weight_; }
+inline float Motion::MorphMotion::GetWeight() const { return weight_; }
 
 inline const Vector3f& Motion::BoneKeyframe::GetTranslation() const { return translation_; }
 inline void Motion::BoneKeyframe::SetTranslation(const Vector3f &translation) { translation_ = translation; }
