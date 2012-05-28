@@ -100,7 +100,7 @@ inline Model* PmxReader::Read(FileReader &file) const {
             }
         }
 
-        TextureRegistry &registry = MMDNG::GetMMDNG().GetTextureRegistry();
+        TextureRegistry &registry = MMD::GetMMD().GetTextureRegistry();
         std::wstring model_file_loc = file.GetLocation();
         size_t texture_num = (size_t)file.Read<std::int32_t>();
         std::vector<const Texture*> texture_list(texture_num);

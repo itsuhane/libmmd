@@ -79,12 +79,12 @@ namespace mmd {
 #include "motion/physics.hxx"
 
 namespace mmd {
-    class MMDNG {
+    class MMD {
     public:
-        static MMDNG& GetMMDNG();
+        static MMD& GetMMD();
         TextureRegistry& GetTextureRegistry();
     private:
-        MMDNG();
+        MMD();
         TextureRegistry texture_registry_;
     };
 }
@@ -99,6 +99,9 @@ namespace mmd {
 namespace mmd {
     Model* ReadModel(FileReader& file);
 #include "mmd_facility_impl.hxx"
+    namespace {
+        const MMD& mmd = MMD::GetMMD();
+    };
 } /* End of namespace mmd */
 
 #ifdef _MSC_VER

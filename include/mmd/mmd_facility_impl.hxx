@@ -6,15 +6,15 @@
             http://www.boost.org/LICENSE_1_0.txt)
 **/
 
-inline MMDNG::MMDNG() {
+inline MMD::MMD() {
 }
 
-inline MMDNG& MMDNG::GetMMDNG() {
-    static MMDNG mmdng;
+inline MMD& MMD::GetMMD() {
+    static MMD mmdng;
     return mmdng;
 }
 
-inline TextureRegistry& MMDNG::GetTextureRegistry() {
+inline TextureRegistry& MMD::GetTextureRegistry() {
     return texture_registry_;
 }
 

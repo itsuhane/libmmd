@@ -55,7 +55,7 @@ inline Model* PmdReader::Read(FileReader &file) const
             }
         }
 
-        TextureRegistry &registry = MMDNG::GetMMDNG().GetTextureRegistry();
+        TextureRegistry &registry = MMD::GetMMD().GetTextureRegistry();
         std::wstring model_file_loc = file.GetLocation();
 
         size_t part_num = file.Read<std::uint32_t>();
