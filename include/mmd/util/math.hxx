@@ -7,17 +7,6 @@
 **/
 
 /**
- * TODO:
- * Conversion between rotations(Q/M/E/A)
- * note: M is M! indeed.
- * Bezier interpolation.
- * note: besides, ogl and dx have their interpolator.
- * for SSE arch, opt. may applied.
- * for massive ops, use GPUs
- * sqrt cheating?
- */
-
-/**
  * Convention:
  *        Vector: X = [ x_0 x_1 x_2 x_3 ]
  *        Matrix: M = [
