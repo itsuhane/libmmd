@@ -33,7 +33,8 @@ inline Model* ReadModel(FileReader& file) {
     } catch (std::exception& e) {
         throw exception(std::string("ReadModel: Exception caught."), e);
     } catch (...) {
-        throw exception(std::string("ReadModel: Non-standard exception caught."));
+        throw
+            exception(std::string("ReadModel: Non-standard exception caught."));
     }
     return model;
 }

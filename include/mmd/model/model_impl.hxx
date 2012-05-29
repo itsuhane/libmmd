@@ -8,65 +8,242 @@
 
 const size_t Model::nil = size_t(-1);
 
-inline Model::SkinningOperator::SkinningType Model::SkinningOperator::GetSkinningType() const { return type_; }
-inline void Model::SkinningOperator::SetSkinningType(Model::SkinningOperator::SkinningType type) { type_ = type; }
+//// class Model::SkinningOperator
 
-inline size_t Model::SkinningOperator::Parameter::BDEF1::GetBoneID() const { return bone_id_; }
-inline void Model::SkinningOperator::Parameter::BDEF1::SetBoneID(size_t index) { bone_id_ = index; }
+//// vmember: skinning_type
+inline Model::SkinningOperator::SkinningType
+Model::SkinningOperator::GetSkinningType() const {
+    return type_;
+}
 
-inline size_t Model::SkinningOperator::Parameter::BDEF2::GetBoneID(size_t n) const { return bone_id_[n]; }
-inline void Model::SkinningOperator::Parameter::BDEF2::SetBoneID(size_t n, size_t index) { bone_id_[n] = index; }
+inline void
+Model::SkinningOperator::SetSkinningType(
+    Model::SkinningOperator::SkinningType type
+) {
+    type_ = type;
+}
 
-inline float Model::SkinningOperator::Parameter::BDEF2::GetBoneWeight() const { return weight_; }
-inline void Model::SkinningOperator::Parameter::BDEF2::SetBoneWeight(float weight) { weight_ = weight; }
+//// vmember: bone_id[BDEF1]
+inline size_t
+Model::SkinningOperator::Parameter::BDEF1::GetBoneID() const {
+    return bone_id_;
+}
 
-inline size_t Model::SkinningOperator::Parameter::BDEF4::GetBoneID(size_t n) const { return bone_id_[n]; }
-inline void Model::SkinningOperator::Parameter::BDEF4::SetBoneID(size_t n, size_t index) { bone_id_[n] = index; }
+inline void
+Model::SkinningOperator::Parameter::BDEF1::SetBoneID(size_t index) {
+    bone_id_ = index;
+}
 
-inline float Model::SkinningOperator::Parameter::BDEF4::GetBoneWeight(size_t n) const { return weight_[n]; }
-inline void Model::SkinningOperator::Parameter::BDEF4::SetBoneWeight(size_t n, float weight) { weight_[n] = weight; }
+//// vmember: bone_id[BDEF2]
+inline size_t
+Model::SkinningOperator::Parameter::BDEF2::GetBoneID(size_t n) const {
+    return bone_id_[n];
+}
 
-inline size_t Model::SkinningOperator::Parameter::SDEF::GetBoneID(size_t n) const { return bone_id_[n]; }
-inline void Model::SkinningOperator::Parameter::SDEF::SetBoneID(size_t n, size_t index) { bone_id_[n] = index; }
+inline void
+Model::SkinningOperator::Parameter::BDEF2::SetBoneID(size_t n, size_t index) {
+    bone_id_[n] = index;
+}
 
-inline float Model::SkinningOperator::Parameter::SDEF::GetBoneWeight() const { return weight_; }
-inline void Model::SkinningOperator::Parameter::SDEF::SetBoneWeight(float weight) { weight_ = weight; }
+//// vmember: bone_weight[BDEF2]
+inline float
+Model::SkinningOperator::Parameter::BDEF2::GetBoneWeight() const {
+    return weight_;
+}
 
-inline const Vector3f& Model::SkinningOperator::Parameter::SDEF::GetC() const { return c_; }
-inline void Model::SkinningOperator::Parameter::SDEF::SetC(const Vector3f &c) { c_ = c; }
+inline void
+Model::SkinningOperator::Parameter::BDEF2::SetBoneWeight(float weight) {
+    weight_ = weight;
+}
 
-inline const Vector3f& Model::SkinningOperator::Parameter::SDEF::GetR0() const { return r0_; }
-inline void Model::SkinningOperator::Parameter::SDEF::SetR0(const Vector3f &r0) { r0_ = r0; }
+//// vmember: bone_id[BDEF4]
+inline size_t
+Model::SkinningOperator::Parameter::BDEF4::GetBoneID(size_t n) const {
+    return bone_id_[n];
+}
 
-inline const Vector3f& Model::SkinningOperator::Parameter::SDEF::GetR1() const { return r1_; }
-inline void Model::SkinningOperator::Parameter::SDEF::SetR1(const Vector3f &r1) { r1_ = r1; }
+inline void
+Model::SkinningOperator::Parameter::BDEF4::SetBoneID(size_t n, size_t index) {
+    bone_id_[n] = index;
+}
 
-inline const Model::SkinningOperator::Parameter::BDEF1& Model::SkinningOperator::GetBDEF1() const { return parameter_.bdef1_; }
-inline const Model::SkinningOperator::Parameter::BDEF2& Model::SkinningOperator::GetBDEF2() const { return parameter_.bdef2_; }
-inline const Model::SkinningOperator::Parameter::BDEF4& Model::SkinningOperator::GetBDEF4() const { return parameter_.bdef4_; }
-inline const Model::SkinningOperator::Parameter::SDEF& Model::SkinningOperator::GetSDEF() const { return parameter_.sdef_; }
+//// vmember: bone_weight[BDEF4]
+inline float
+Model::SkinningOperator::Parameter::BDEF4::GetBoneWeight(size_t n) const {
+    return weight_[n];
+}
 
-inline Model::SkinningOperator::Parameter::BDEF1& Model::SkinningOperator::GetBDEF1() { return parameter_.bdef1_; }
-inline Model::SkinningOperator::Parameter::BDEF2& Model::SkinningOperator::GetBDEF2() { return parameter_.bdef2_; }
-inline Model::SkinningOperator::Parameter::BDEF4& Model::SkinningOperator::GetBDEF4() { return parameter_.bdef4_; }
-inline Model::SkinningOperator::Parameter::SDEF& Model::SkinningOperator::GetSDEF() { return parameter_.sdef_; }
+inline void
+Model::SkinningOperator::Parameter::BDEF4::SetBoneWeight(size_t n, float weight) {
+    weight_[n] = weight;
+}
 
-template< template<typename V> class T > inline Model::Vertex<T>::Vertex(Vector3f &coordinate, Vector3f &normal, Vector2f &uv_coord, Vector4f &extra_uv_1, Vector4f &extra_uv_2, Vector4f &extra_uv_3, Vector4f &extra_uv_4, SkinningOperator &skinning_operator, float &edge_scale)
-    : coordinate_(coordinate), normal_(normal), uv_coord_(uv_coord), extra_uv_coord_1_(extra_uv_1), extra_uv_coord_2_(extra_uv_2), extra_uv_coord_3_(extra_uv_3), extra_uv_coord_4_(extra_uv_4), skinning_operator_(skinning_operator), edge_scale_(edge_scale) {}
+//// vmember: bone_id[SDEF]
+inline size_t
+Model::SkinningOperator::Parameter::SDEF::GetBoneID(size_t n) const {
+    return bone_id_[n];
+}
 
-template< template<typename V> class T > inline const Vector3f& Model::Vertex<T>::GetCoordinate() const { return coordinate_; }
-template< template<typename V> class T > inline void Model::Vertex<T>::SetCoordinate(const Vector3f &coordinate) { coordinate_ = coordinate; }
+inline void
+Model::SkinningOperator::Parameter::SDEF::SetBoneID(size_t n, size_t index) {
+    bone_id_[n] = index;
+}
 
-template< template<typename V> class T > inline const Vector3f& Model::Vertex<T>::GetNormal() const { return normal_; }
-template< template<typename V> class T > inline void Model::Vertex<T>::SetNormal(const Vector3f &normal) { normal_ = normal; }
+//// vmember: bone_weight[SDEF]
+inline float
+Model::SkinningOperator::Parameter::SDEF::GetBoneWeight() const {
+    return weight_;
+}
 
-template< template<typename V> class T > inline const Vector2f& Model::Vertex<T>::GetUVCoordinate() const { return uv_coord_; }
-template< template<typename V> class T > inline void Model::Vertex<T>::SetUVCoordinate(const Vector2f &uv_coord) { uv_coord_ = uv_coord; }
+inline void
+Model::SkinningOperator::Parameter::SDEF::SetBoneWeight(float weight) {
+    weight_ = weight;
+}
 
-template< template<typename V> class T > inline const Vector4f& Model::Vertex<T>::GetExtraUVCoordinate(size_t index) const {
+//// vmember: C[SDEF]
+inline const Vector3f&
+Model::SkinningOperator::Parameter::SDEF::GetC() const {
+    return c_;
+}
+
+inline void
+Model::SkinningOperator::Parameter::SDEF::SetC(const Vector3f &c) {
+    c_ = c;
+}
+
+//// vmember: R0
+inline const Vector3f&
+Model::SkinningOperator::Parameter::SDEF::GetR0() const {
+    return r0_;
+}
+
+inline void
+Model::SkinningOperator::Parameter::SDEF::SetR0(const Vector3f &r0) {
+    r0_ = r0;
+}
+
+//// vmember: R1
+inline const Vector3f&
+Model::SkinningOperator::Parameter::SDEF::GetR1() const {
+    return r1_;
+}
+
+inline void
+Model::SkinningOperator::Parameter::SDEF::SetR1(const Vector3f &r1) {
+    r1_ = r1;
+}
+
+//// omember: Get
+inline const Model::SkinningOperator::Parameter::BDEF1&
+Model::SkinningOperator::GetBDEF1() const {
+    return parameter_.bdef1_;
+}
+
+inline const Model::SkinningOperator::Parameter::BDEF2&
+Model::SkinningOperator::GetBDEF2() const {
+    return parameter_.bdef2_;
+}
+
+inline const Model::SkinningOperator::Parameter::BDEF4&
+Model::SkinningOperator::GetBDEF4() const {
+    return parameter_.bdef4_;
+}
+
+inline const Model::SkinningOperator::Parameter::SDEF&
+Model::SkinningOperator::GetSDEF() const {
+    return parameter_.sdef_;
+}
+
+inline Model::SkinningOperator::Parameter::BDEF1&
+Model::SkinningOperator::GetBDEF1() {
+    return parameter_.bdef1_;
+}
+
+inline Model::SkinningOperator::Parameter::BDEF2&
+Model::SkinningOperator::GetBDEF2() {
+    return parameter_.bdef2_;
+}
+
+inline Model::SkinningOperator::Parameter::BDEF4&
+Model::SkinningOperator::GetBDEF4() {
+    return parameter_.bdef4_;
+}
+
+inline Model::SkinningOperator::Parameter::SDEF&
+Model::SkinningOperator::GetSDEF() {
+    return parameter_.sdef_;
+}
+
+//// class Model::Vertex
+
+//// ctor
+template <template<typename V> class T> inline
+Model::Vertex<T>::Vertex(
+    Vector3f &coordinate,
+    Vector3f &normal,
+    Vector2f &uv_coord,
+    Vector4f &extra_uv_1,
+    Vector4f &extra_uv_2,
+    Vector4f &extra_uv_3,
+    Vector4f &extra_uv_4,
+    SkinningOperator &skinning_operator,
+    float &edge_scale
+) : coordinate_(coordinate),
+    normal_(normal),
+    uv_coord_(uv_coord),
+    extra_uv_coord_1_(extra_uv_1),
+    extra_uv_coord_2_(extra_uv_2),
+    extra_uv_coord_3_(extra_uv_3),
+    extra_uv_coord_4_(extra_uv_4),
+    skinning_operator_(skinning_operator),
+    edge_scale_(edge_scale)
+{}
+
+//// vmember: coordinate
+template <template <typename V> class T> inline
+const Vector3f&
+Model::Vertex<T>::GetCoordinate() const {
+    return coordinate_;
+}
+
+template <template <typename V> class T> inline
+void
+Model::Vertex<T>::SetCoordinate(const Vector3f &coordinate) {
+    coordinate_ = coordinate;
+}
+
+//// vmember: normal
+template <template <typename V> class T> inline
+const Vector3f&
+Model::Vertex<T>::GetNormal() const {
+    return normal_;
+}
+
+template <template <typename V> class T> inline
+void
+Model::Vertex<T>::SetNormal(const Vector3f &normal) {
+    normal_ = normal;
+}
+
+//// vmember: uv_coordinate
+template <template <typename V> class T> inline
+const Vector2f&
+Model::Vertex<T>::GetUVCoordinate() const {
+    return uv_coord_;
+}
+
+template <template <typename V> class T> inline
+void
+Model::Vertex<T>::SetUVCoordinate(const Vector2f &uv_coord) {
+    uv_coord_ = uv_coord;
+}
+
+//// vmember: extra_uv_coordinate
+template <template <typename V> class T> inline
+const Vector4f&
+Model::Vertex<T>::GetExtraUVCoordinate(size_t index) const {
     switch(index) {
-    default:
-    case 0:
+    default: case 0:
         return extra_uv_coord_1_;
     case 1:
         return extra_uv_coord_2_;
@@ -76,10 +253,12 @@ template< template<typename V> class T > inline const Vector4f& Model::Vertex<T>
         return extra_uv_coord_4_;
     }
 }
-template< template<typename V> class T > inline void Model::Vertex<T>::SetExtraUVCoordinate(size_t index, const Vector4f &uv_coord) {
+
+template <template <typename V> class T> inline
+void
+Model::Vertex<T>::SetExtraUVCoordinate(size_t index, const Vector4f &uv_coord) {
     switch(index) {
-    default:
-    case 0:
+    default: case 0:
         extra_uv_coord_1_ = uv_coord;
     case 1:
         extra_uv_coord_2_ = uv_coord;
@@ -90,11 +269,31 @@ template< template<typename V> class T > inline void Model::Vertex<T>::SetExtraU
     }
 }
 
-template< template<typename V> class T > inline const Model::SkinningOperator& Model::Vertex<T>::GetSkinningOperator() const { return skinning_operator_; }
-template< template<typename V> class T > inline Model::SkinningOperator& Model::Vertex<T>::GetSkinningOperator() { return skinning_operator_; }
+//// omember: skinning_operator
+template <template <typename V> class T> inline
+const Model::SkinningOperator&
+Model::Vertex<T>::GetSkinningOperator() const {
+    return skinning_operator_;
+}
 
-template< template<typename V> class T > inline float Model::Vertex<T>::GetEdgeScale() const { return edge_scale_; }
-template< template<typename V> class T > inline void Model::Vertex<T>::SetEdgeScale(float edge_scale) { edge_scale_ = edge_scale; }
+template <template <typename V> class T> inline
+Model::SkinningOperator&
+Model::Vertex<T>::GetSkinningOperator() {
+    return skinning_operator_;
+}
+
+//// vmember: edge_scale
+template <template <typename V> class T> inline
+float
+Model::Vertex<T>::GetEdgeScale() const {
+    return edge_scale_;
+}
+
+template <template <typename V> class T> inline
+void
+Model::Vertex<T>::SetEdgeScale(float edge_scale) {
+    edge_scale_ = edge_scale;
+}
 
 inline const Material& Model::Part::GetMaterial() const { return material_; }
 inline Material& Model::Part::GetMaterial() { return material_; }
@@ -308,12 +507,12 @@ inline std::bitset<16>& Model::RigidBody::GetCollisionMask() { return collision_
 
 inline Model::RigidBody::RigidBodyShape Model::RigidBody::GetShape() const { return shape_; }
 inline void Model::RigidBody::SetShape(Model::RigidBody::RigidBodyShape shape) { shape_ = shape; }
-inline const Vector3f Model::RigidBody::GetDimensions() const { return dimension_; }
+inline const Vector3f& Model::RigidBody::GetDimensions() const { return dimension_; }
 inline void Model::RigidBody::SetDimensions(const Vector3f& dimensions) { dimension_ = dimensions; }
 
-inline const Vector3f Model::RigidBody::GetPosition() const { return position_; }
+inline const Vector3f& Model::RigidBody::GetPosition() const { return position_; }
 inline void Model::RigidBody::SetPosition(const Vector3f& position) { position_ = position; }
-inline const Vector3f Model::RigidBody::GetRotation() const { return rotation_; }
+inline const Vector3f& Model::RigidBody::GetRotation() const { return rotation_; }
 inline void Model::RigidBody::SetRotation(const Vector3f& rotation) { rotation_ = rotation; }
 
 inline float Model::RigidBody::GetMass() const { return mass_; }
@@ -340,24 +539,24 @@ inline void Model::Constraint::SetNameEn(const std::wstring& name) { name_en_ = 
 inline size_t Model::Constraint::GetAssociatedRigidBodyIndex(size_t n) const { return associated_rigid_bodies_[n]; }
 inline void Model::Constraint::SetAssociatedRigidBodyIndex(size_t n, size_t index) { associated_rigid_bodies_[n] = index; }
 
-inline const Vector3f Model::Constraint::GetPosition() const { return position_; }
+inline const Vector3f& Model::Constraint::GetPosition() const { return position_; }
 inline void Model::Constraint::SetPosition(const Vector3f& position) { position_ = position; }
-inline const Vector3f Model::Constraint::GetRotation() const { return rotation_; }
+inline const Vector3f& Model::Constraint::GetRotation() const { return rotation_; }
 inline void Model::Constraint::SetRotation(const Vector3f& rotation) { rotation_ = rotation; }
 
-inline const Vector3f Model::Constraint::GetPositionLowLimit() const { return position_lo_limit_; }
+inline const Vector3f& Model::Constraint::GetPositionLowLimit() const { return position_lo_limit_; }
 inline void Model::Constraint::SetPositionLowLimit(const Vector3f& limit) { position_lo_limit_ = limit; }
-inline const Vector3f Model::Constraint::GetPositionHighLimit() const { return position_hi_limit_; }
+inline const Vector3f& Model::Constraint::GetPositionHighLimit() const { return position_hi_limit_; }
 inline void Model::Constraint::SetPositionHighLimit(const Vector3f& limit) { position_hi_limit_ = limit; }
 
-inline const Vector3f Model::Constraint::GetRotationLowLimit() const { return rotation_lo_limit_; }
+inline const Vector3f& Model::Constraint::GetRotationLowLimit() const { return rotation_lo_limit_; }
 inline void Model::Constraint::SetRotationLowLimit(const Vector3f& limit) { rotation_lo_limit_ = limit; }
-inline const Vector3f Model::Constraint::GetRotationHighLimit() const { return rotation_hi_limit_; }
+inline const Vector3f& Model::Constraint::GetRotationHighLimit() const { return rotation_hi_limit_; }
 inline void Model::Constraint::SetRotationHighLimit(const Vector3f& limit) { rotation_hi_limit_ = limit; }
 
-inline const Vector3f Model::Constraint::GetSpringTranslate() const { return spring_translate_; }
+inline const Vector3f& Model::Constraint::GetSpringTranslate() const { return spring_translate_; }
 inline void Model::Constraint::SetSpringTranslate(const Vector3f& translate) { spring_translate_ = translate; }
-inline const Vector3f Model::Constraint::GetSpringRotate() const { return spring_rotate_; }
+inline const Vector3f& Model::Constraint::GetSpringRotate() const { return spring_rotate_; }
 inline void Model::Constraint::SetSpringRotate(const Vector3f& rotate) { spring_rotate_ = rotate; }
 
 inline void Model::SetExtraUVNumber(size_t uv_number) {
