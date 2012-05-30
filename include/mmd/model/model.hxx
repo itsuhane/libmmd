@@ -106,8 +106,8 @@ namespace mmd {
         template <template <typename V> class T>
         class Vertex {
             friend class Model;
-            friend class Vertex<ref>;
-            friend class Vertex<cref>;
+            template <template <typename V1> class T1>
+            friend class Vertex;
         public:
             const Vector3f &GetCoordinate() const;
             void SetCoordinate(const Vector3f &coordinate);
@@ -141,6 +141,9 @@ namespace mmd {
                 typename T<SkinningOperator>::type skinning_operator,
                 typename T<float>::type edge_scale
             );
+
+            Vertex& operator=(const Vertex& v);
+
             typename T<Vector3f>::type coordinate_;
             typename T<Vector3f>::type normal_;
             typename T<Vector2f>::type uv_coord_;
