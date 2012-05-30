@@ -56,7 +56,7 @@
 #include <string>
 #include <vector>
 
-#ifndef MMD_HAS_EXPERIMENTAL_CXX0X
+#ifdef MMD_HAS_EXPERIMENTAL_CXX0X
 #include <type_traits>
 #endif
 #include <exception>
