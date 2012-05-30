@@ -177,17 +177,17 @@ Model::SkinningOperator::GetSDEF() {
 //// class Model::Vertex
 
 //// ctor
-template <template<typename V> class T> inline
+template <template <typename V> class T> inline
 Model::Vertex<T>::Vertex(
-    Vector3f &coordinate,
-    Vector3f &normal,
-    Vector2f &uv_coord,
-    Vector4f &extra_uv_1,
-    Vector4f &extra_uv_2,
-    Vector4f &extra_uv_3,
-    Vector4f &extra_uv_4,
-    SkinningOperator &skinning_operator,
-    float &edge_scale
+    typename T<Vector3f>::type coordinate,
+    typename T<Vector3f>::type normal,
+    typename T<Vector2f>::type uv_coord,
+    typename T<Vector4f>::type extra_uv_1,
+    typename T<Vector4f>::type extra_uv_2,
+    typename T<Vector4f>::type extra_uv_3,
+    typename T<Vector4f>::type extra_uv_4,
+    typename T<SkinningOperator>::type skinning_operator,
+    typename T<float>::type edge_scale
 ) : coordinate_(coordinate),
     normal_(normal),
     uv_coord_(uv_coord),
@@ -198,6 +198,21 @@ Model::Vertex<T>::Vertex(
     skinning_operator_(skinning_operator),
     edge_scale_(edge_scale)
 {}
+
+template <template <typename V> class T>
+template <template <typename V1> class T1> inline
+Model::Vertex<T>::Vertex(Vertex<T1>& v)
+  : coordinate_(v.coordinate_),
+    normal_(v.normal_),
+    uv_coord_(v.uv_coord_),
+    extra_uv_coord_1_(v.extra_uv_1_),
+    extra_uv_coord_2_(v.extra_uv_2_),
+    extra_uv_coord_3_(v.extra_uv_3_),
+    extra_uv_coord_4_(v.extra_uv_4_),
+    skinning_operator_(v.skinning_operator_),
+    edge_scale_(v.edge_scale_)
+{}
+
 
 //// vmember: coordinate
 template <template <typename V> class T> inline
@@ -583,6 +598,22 @@ inline void Model::SetNameEn(const std::wstring &name_en) { name_en_ = name_en; 
 inline void Model::SetDescriptionEn(const std::wstring &description_en) { description_en_ = description_en; }
 
 inline size_t Model::GetVertexNum() const { return vertex_info_.coordinates_.size(); }
+
+inline Model::Vertex<cref> Model::GetVertex(size_t index) const {
+    switch(GetExtraUVNumber()) {
+    default:
+    case 0:
+        return Model::Vertex<cref>(vertex_info_.coordinates_[index], vertex_info_.normals_[index], vertex_info_.uv_coords_[index], make_null_ref<Vector4f>(), make_null_ref<Vector4f>(), make_null_ref<Vector4f>(), make_null_ref<Vector4f>(), vertex_info_.skinning_operators_[index], vertex_info_.edge_scales_[index]);
+    case 1:
+        return Model::Vertex<cref>(vertex_info_.coordinates_[index], vertex_info_.normals_[index], vertex_info_.uv_coords_[index], vertex_info_.extra_uv_coords_[0][index], make_null_ref<Vector4f>(), make_null_ref<Vector4f>(), make_null_ref<Vector4f>(), vertex_info_.skinning_operators_[index], vertex_info_.edge_scales_[index]);
+    case 2:
+        return Model::Vertex<cref>(vertex_info_.coordinates_[index], vertex_info_.normals_[index], vertex_info_.uv_coords_[index], vertex_info_.extra_uv_coords_[0][index], vertex_info_.extra_uv_coords_[1][index], make_null_ref<Vector4f>(), make_null_ref<Vector4f>(), vertex_info_.skinning_operators_[index], vertex_info_.edge_scales_[index]);
+    case 3:
+        return Model::Vertex<cref>(vertex_info_.coordinates_[index], vertex_info_.normals_[index], vertex_info_.uv_coords_[index], vertex_info_.extra_uv_coords_[0][index], vertex_info_.extra_uv_coords_[1][index], vertex_info_.extra_uv_coords_[2][index], make_null_ref<Vector4f>(), vertex_info_.skinning_operators_[index], vertex_info_.edge_scales_[index]);
+    case 4:
+        return Model::Vertex<cref>(vertex_info_.coordinates_[index], vertex_info_.normals_[index], vertex_info_.uv_coords_[index], vertex_info_.extra_uv_coords_[0][index], vertex_info_.extra_uv_coords_[1][index], vertex_info_.extra_uv_coords_[2][index], vertex_info_.extra_uv_coords_[3][index], vertex_info_.skinning_operators_[index], vertex_info_.edge_scales_[index]);
+    }
+}
 
 inline Model::Vertex<ref> Model::GetVertex(size_t index) {
     switch(GetExtraUVNumber()) {

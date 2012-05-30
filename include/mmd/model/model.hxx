@@ -106,6 +106,8 @@ namespace mmd {
         template <template <typename V> class T>
         class Vertex {
             friend class Model;
+            friend class Vertex<ref>;
+            friend class Vertex<cref>;
         public:
             const Vector3f &GetCoordinate() const;
             void SetCoordinate(const Vector3f &coordinate);
@@ -124,17 +126,20 @@ namespace mmd {
 
             float GetEdgeScale() const;
             void SetEdgeScale(float edge_scale);
+
+            template <template <typename V1> class T1>
+            Vertex(Vertex<T1>& v);
         private:
             Vertex(
-                Vector3f &coordinate,
-                Vector3f &normal,
-                Vector2f &uv_coord,
-                Vector4f &extra_uv_1,
-                Vector4f &extra_uv_2,
-                Vector4f &extra_uv_3,
-                Vector4f &extra_uv_4,
-                SkinningOperator &skinning_operator,
-                float &edge_scale
+                typename T<Vector3f>::type coordinate,
+                typename T<Vector3f>::type normal,
+                typename T<Vector2f>::type uv_coord,
+                typename T<Vector4f>::type extra_uv_1,
+                typename T<Vector4f>::type extra_uv_2,
+                typename T<Vector4f>::type extra_uv_3,
+                typename T<Vector4f>::type extra_uv_4,
+                typename T<SkinningOperator>::type skinning_operator,
+                typename T<float>::type edge_scale
             );
             typename T<Vector3f>::type coordinate_;
             typename T<Vector3f>::type normal_;
@@ -145,7 +150,6 @@ namespace mmd {
             typename T<Vector4f>::type extra_uv_coord_4_;
             typename T<SkinningOperator>::type skinning_operator_;
             typename T<float>::type edge_scale_;
-            Vertex &operator=(Vertex&);
         };
 
         class Part {
@@ -648,7 +652,7 @@ namespace mmd {
         void SetDescriptionEn(const std::wstring &description_en);
 
         size_t GetVertexNum() const;
-        const Vertex<ref> GetVertex(size_t index) const;
+        Vertex<cref> GetVertex(size_t index) const;
         Vertex<ref> GetVertex(size_t index);
         Vertex<ref> NewVertex();
 

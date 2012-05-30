@@ -21,6 +21,14 @@ namespace std {
     typedef __int32 int32_t;
 #endif
 
+#ifndef MMD_HAS_EXPERIMENTAL_CXX0X
+    template <bool B, class T=void>
+    struct enable_if {};
+
+    template <class T>
+    struct enable_if<true, T> { typedef T type; };
+#endif
+
 } /* End of namespace std */
 
 namespace mmd {
