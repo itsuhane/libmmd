@@ -128,7 +128,7 @@ namespace mmd {
             void SetEdgeScale(float edge_scale);
 
             template <template <typename V1> class T1>
-            Vertex(Vertex<T1>& v);
+            Vertex(Vertex<T1> &v);
         private:
             Vertex(
                 typename T<Vector3f>::type coordinate,
@@ -142,7 +142,7 @@ namespace mmd {
                 typename T<float>::type edge_scale
             );
 
-            Vertex& operator=(const Vertex& v);
+            Vertex &operator=(const Vertex &v)/*=delete*/;
 
             typename T<Vector3f>::type coordinate_;
             typename T<Vector3f>::type normal_;

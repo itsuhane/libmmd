@@ -11,10 +11,12 @@
     PMX Specification, which could be found in 'Lib/' directory of PMDEditor.
 **/
 inline Model* PmxReader::Read(FileReader &file) const {
-    std::auto_ptr<Model> model;
-
     try {
-        model.reset(new Model);
+#ifndef MMD_HAS_EXPERIMENTAL_CXX0X
+        std::auto_ptr<Model> model(new Model);
+#else
+        std::unique_ptr<Model> model(new Model);
+#endif
         file.Reset();
 
         interprete::pmx_header header = file.Read<interprete::pmx_header>();
@@ -373,11 +375,11 @@ inline Model* PmxReader::Read(FileReader &file) const {
             }
         }
         model->Normalize();
+
+        return model.release();
     } catch(std::exception& e) {
         throw exception(std::string("PmxReader: Exception caught."), e);
     } catch(...) {
         throw exception(std::string("PmxReader: Non-standard exception caught."));
     }
-
-    return model.release();
 }

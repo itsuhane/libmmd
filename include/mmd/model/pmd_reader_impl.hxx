@@ -12,10 +12,12 @@
 **/
 inline Model* PmdReader::Read(FileReader &file) const
 {
-    std::auto_ptr<Model> model;
-
     try {
-        model.reset(new Model);
+#ifndef MMD_HAS_EXPERIMENTAL_CXX0X
+        std::auto_ptr<Model> model(new Model);
+#else
+        std::unique_ptr<Model> model(new Model);
+#endif
         file.Reset();
 
         interprete::pmd_model_header header = file.Read<interprete::pmd_model_header>();
@@ -467,11 +469,11 @@ PMD_READER_READ_LEGACY_30:
 PMD_READER_READ_LEGACY_50:
 PMD_READER_READ_SUCCEED:
         model->Normalize();
+
+        return model.release();
     } catch(std::exception& e) {
         throw exception(std::string("PmdReader: Exception caught."), e);
     } catch(...) {
         throw exception(std::string("PmdReader: Non-standard exception caught."));
     }
-
-    return model.release();
 }
