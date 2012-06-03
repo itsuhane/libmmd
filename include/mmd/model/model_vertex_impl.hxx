@@ -45,7 +45,6 @@ Model::Vertex<T>::Vertex(Vertex<T1> &v)
     edge_scale_(v.edge_scale_)
 {}
 
-
 //// vmember: coordinate
 template <template <typename V> class T> inline
 const Vector3f&
