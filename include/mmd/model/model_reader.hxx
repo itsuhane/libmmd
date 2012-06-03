@@ -23,7 +23,9 @@ namespace mmd {
             } else if(s=="PMX") {
                 return MODEL_TYPE_PMX;
             } else {
-                throw exception(std::string("GetModelFormat: Cannot determine file format."));
+                throw exception(
+                    std::string("GetModelFormat: Cannot determine file format.")
+                );
             }
         }
 

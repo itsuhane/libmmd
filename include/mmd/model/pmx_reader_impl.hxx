@@ -10,7 +10,8 @@
   Reference:
     PMX Specification, which could be found in 'Lib/' directory of PMDEditor.
 **/
-inline Model* PmxReader::Read(FileReader &file) const {
+inline Model*
+PmxReader::Read(FileReader &file) const {
     try {
 #ifndef MMD_HAS_EXPERIMENTAL_CXX0X
         std::auto_ptr<Model> model(new Model);
@@ -24,7 +25,9 @@ inline Model* PmxReader::Read(FileReader &file) const {
 
         std::string magic = header.magic;
         if(magic!="PMX "||header.version!=2.0f||file_flags_size!=8) {
-            throw exception(std::string("PmxReader: File is not a PMX 2.0 file."));
+            throw exception(
+                std::string("PmxReader: File is not a PMX 2.0 file.")
+            );
         }
 
         bool utf8_encoding = file.Read<std::uint8_t>()>0;
@@ -46,7 +49,8 @@ inline Model* PmxReader::Read(FileReader &file) const {
 
         size_t vertex_num = (size_t)file.Read<std::int32_t>();
         for(size_t i=0;i<vertex_num;++i) {
-            interprete::pmx_vertex_basic pv = file.Read<interprete::pmx_vertex_basic>();
+            interprete::pmx_vertex_basic pv
+                = file.Read<interprete::pmx_vertex_basic>();
 
             Model::Vertex<ref> vertex = model->NewVertex();
             Model::SkinningOperator &op = vertex.GetSkinningOperator();
@@ -60,7 +64,9 @@ inline Model* PmxReader::Read(FileReader &file) const {
                 vertex.SetExtraUVCoordinate(ei, euv);
             }
 
-            op.SetSkinningType((Model::SkinningOperator::SkinningType)file.Read<std::int8_t>());
+            op.SetSkinningType(
+                (Model::SkinningOperator::SkinningType)file.Read<std::int8_t>()
+            );
             switch(op.GetSkinningType()) {
             case Model::SkinningOperator::SKINNING_BDEF1:
                 op.GetBDEF1().SetBoneID(file.ReadIndex(bone_index_size));
@@ -87,7 +93,9 @@ inline Model* PmxReader::Read(FileReader &file) const {
                 op.GetSDEF().SetR1(file.Read<Vector3f>());
                 break;
             default:
-                throw exception(std::string("PmxReader: Invalid skinning specification"));
+                throw exception(
+                    std::string("PmxReader: Invalid skinning specification")
+                );
             }
 
             vertex.SetEdgeScale(file.Read<float>());
@@ -106,7 +114,10 @@ inline Model* PmxReader::Read(FileReader &file) const {
         size_t texture_num = (size_t)file.Read<std::int32_t>();
         std::vector<const Texture*> texture_list(texture_num);
         for(size_t i=0;i<texture_num;++i) {
-            texture_list[i] = &(registry.GetTexture(file.ReadString(utf8_encoding), model_file_loc));
+            texture_list[i]
+                = &registry.GetTexture(
+                    file.ReadString(utf8_encoding), model_file_loc
+                );
         }
 
         size_t part_num = (size_t)file.Read<std::int32_t>();
@@ -118,18 +129,29 @@ inline Model* PmxReader::Read(FileReader &file) const {
             material.SetName(file.ReadString(utf8_encoding));
             material.SetNameEn(file.ReadString(utf8_encoding));
 
-            interprete::pmx_material_basic pm = file.Read<interprete::pmx_material_basic>();
+            interprete::pmx_material_basic pm
+                = file.Read<interprete::pmx_material_basic>();
 
             material.SetDiffuseColor(pm.diffuse);
             material.SetSpecularColor(pm.specular);
             material.SetShininess(pm.shininess);
             material.SetAmbientColor(pm.ambient);
 
-            material.SetDrawDoubleFace((pm.draw_flag&interprete::PMX_MATERIAL_DRAW_DOUBLE_FACE)!=0);
-            material.SetDrawGroundShadow((pm.draw_flag&interprete::PMX_MATERIAL_DRAW_GROUND_SHADOW)!=0);
-            material.SetCastSelfShadow((pm.draw_flag&interprete::PMX_MATERIAL_CAST_SELF_SHADOW)!=0);
-            material.SetDrawSelfShadow((pm.draw_flag&interprete::PMX_MATERIAL_DRAW_SELF_SHADOW)!=0);
-            material.SetDrawEdge((pm.draw_flag&interprete::PMX_MATERIAL_DRAW_EDGE)!=0);
+            material.SetDrawDoubleFace(
+                (pm.draw_flag&interprete::PMX_MATERIAL_DRAW_DOUBLE_FACE)!=0
+            );
+            material.SetDrawGroundShadow(
+                (pm.draw_flag&interprete::PMX_MATERIAL_DRAW_GROUND_SHADOW)!=0
+            );
+            material.SetCastSelfShadow(
+                (pm.draw_flag&interprete::PMX_MATERIAL_CAST_SELF_SHADOW)!=0
+            );
+            material.SetDrawSelfShadow(
+                (pm.draw_flag&interprete::PMX_MATERIAL_DRAW_SELF_SHADOW)!=0
+            );
+            material.SetDrawEdge(
+                (pm.draw_flag&interprete::PMX_MATERIAL_DRAW_EDGE)!=0
+            );
 
             material.SetEdgeColor(pm.edge_color);
             material.SetEdgeSize(pm.edge_size);
@@ -143,7 +165,9 @@ inline Model* PmxReader::Read(FileReader &file) const {
             if(sub_texture_index<texture_list.size()) {
                 material.SetSubTexture(texture_list[sub_texture_index]);
             }
-            material.SetSubTextureType((Material::SubTextureTypeEnum)file.Read<std::uint8_t>());
+            material.SetSubTextureType(
+                (Material::SubTextureTypeEnum)file.Read<std::uint8_t>()
+            );
 
             bool use_global_toon = file.Read<std::uint8_t>()>0;
             if(use_global_toon) {
@@ -187,11 +211,15 @@ inline Model* PmxReader::Read(FileReader &file) const {
             bone.SetControllable((flag&interprete::PMX_BONE_CONTROLLABLE)!=0);
             bone.SetHasIK((flag&interprete::PMX_BONE_HAS_IK)!=0);
             bone.SetAppendRotate((flag&interprete::PMX_BONE_ACQUIRE_ROTATE)!=0);
-            bone.SetAppendTranslate((flag&interprete::PMX_BONE_ACQUIRE_TRANSLATE)!=0);
+            bone.SetAppendTranslate(
+                (flag&interprete::PMX_BONE_ACQUIRE_TRANSLATE)!=0
+            );
             bone.SetRotAxisFixed((flag&interprete::PMX_BONE_ROT_AXIS_FIXED)!=0);
             bone.SetUseLocalAxis((flag&interprete::PMX_BONE_USE_LOCAL_AXIS)!=0);
             bone.SetPostPhysics((flag&interprete::PMX_BONE_POST_PHYSICS)!=0);
-            bone.SetReceiveTransform((flag&interprete::PMX_BONE_RECEIVE_TRANSFORM)!=0);
+            bone.SetReceiveTransform(
+                (flag&interprete::PMX_BONE_RECEIVE_TRANSFORM)!=0
+            );
 
             if(bone.IsChildUseID()) {
                 bone.SetChildIndex(file.ReadIndex(bone_index_size));
@@ -240,29 +268,39 @@ inline Model* PmxReader::Read(FileReader &file) const {
             Model::Morph &morph = model->NewMorph();
             morph.SetName(file.ReadString(utf8_encoding));
             morph.SetNameEn(file.ReadString(utf8_encoding));
-            morph.SetCategory((Model::Morph::MorphCategory)file.Read<std::uint8_t>());
+            morph.SetCategory(
+                (Model::Morph::MorphCategory)file.Read<std::uint8_t>()
+            );
             morph.SetType((Model::Morph::MorphType)file.Read<std::uint8_t>());
             size_t morph_data_num = (size_t)file.Read<std::int32_t>();
             switch(morph.GetType()) {
             case Model::Morph::MORPH_TYPE_GROUP:
                 for(size_t j=0;j<morph_data_num;++j) {
                     Model::Morph::MorphData &morph_data = morph.NewMorphData();
-                    morph_data.GetGroupMorph().SetMorphIndex(file.ReadIndex(morph_index_size));
+                    morph_data.GetGroupMorph().SetMorphIndex(
+                        file.ReadIndex(morph_index_size)
+                    );
                     morph_data.GetGroupMorph().SetMorphRate(file.Read<float>());
                 }
                 break;
             case Model::Morph::MORPH_TYPE_VERTEX:
                 for(size_t j=0;j<morph_data_num;++j) {
                     Model::Morph::MorphData &morph_data = morph.NewMorphData();
-                    morph_data.GetVertexMorph().SetVertexIndex(file.ReadIndex(vertex_index_size));
+                    morph_data.GetVertexMorph().SetVertexIndex(
+                        file.ReadIndex(vertex_index_size)
+                    );
                     morph_data.GetVertexMorph().SetOffset(file.Read<Vector3f>());
                 }
                 break;
             case Model::Morph::MORPH_TYPE_BONE:
                 for(size_t j=0;j<morph_data_num;++j) {
                     Model::Morph::MorphData &morph_data = morph.NewMorphData();
-                    morph_data.GetBoneMorph().SetBoneIndex(file.ReadIndex(bone_index_size));
-                    morph_data.GetBoneMorph().SetTranslation(file.Read<Vector3f>());
+                    morph_data.GetBoneMorph().SetBoneIndex(
+                        file.ReadIndex(bone_index_size)
+                    );
+                    morph_data.GetBoneMorph().SetTranslation(
+                        file.Read<Vector3f>()
+                    );
                     morph_data.GetBoneMorph().SetRotation(file.Read<Vector4f>());
                 }
                 break;
@@ -273,7 +311,9 @@ inline Model* PmxReader::Read(FileReader &file) const {
             case Model::Morph::MORPH_TYPE_EXT_UV_4:
                 for(size_t j=0;j<morph_data_num;++j) {
                     Model::Morph::MorphData &morph_data = morph.NewMorphData();
-                    morph_data.GetUVMorph().SetVertexIndex(file.ReadIndex(vertex_index_size));
+                    morph_data.GetUVMorph().SetVertexIndex(
+                        file.ReadIndex(vertex_index_size)
+                    );
                     morph_data.GetUVMorph().SetOffset(file.Read<Vector4f>());
                 }
                 break;
@@ -288,8 +328,12 @@ inline Model* PmxReader::Read(FileReader &file) const {
                         morph_data.GetMaterialMorph().SetMaterialIndex(0);
                         morph_data.GetMaterialMorph().SetGlobal(true);
                     }
-                    interprete::pmx_material_morph pmm = file.Read<interprete::pmx_material_morph>();
-                    morph_data.GetMaterialMorph().SetMethod((Model::Morph::MorphData::MaterialMorph::MaterialMorphMethod)pmm.offset_type);
+                    interprete::pmx_material_morph pmm
+                        = file.Read<interprete::pmx_material_morph>();
+                    morph_data.GetMaterialMorph().SetMethod(
+                        (Model::Morph::MorphData::MaterialMorph::MaterialMorphMethod)
+                            pmm.offset_type
+                    );
                     morph_data.GetMaterialMorph().SetDiffuse(pmm.diffuse);
                     morph_data.GetMaterialMorph().SetSpecular(pmm.specular);
                     morph_data.GetMaterialMorph().SetAmbient(pmm.ambient);
@@ -297,7 +341,9 @@ inline Model* PmxReader::Read(FileReader &file) const {
                     morph_data.GetMaterialMorph().SetEdgeColor(pmm.edge_color);
                     morph_data.GetMaterialMorph().SetEdgeSize(pmm.edge_size);
                     morph_data.GetMaterialMorph().SetTexture(pmm.texture_shift);
-                    morph_data.GetMaterialMorph().SetSubTexture(pmm.sub_texture_shift);
+                    morph_data.GetMaterialMorph().SetSubTexture(
+                        pmm.sub_texture_shift
+                    );
                     morph_data.GetMaterialMorph().SetToonTexture(pmm.toon_shift);
                 }
                 break;
@@ -333,7 +379,8 @@ inline Model* PmxReader::Read(FileReader &file) const {
             rigid_body.SetName(file.ReadString(utf8_encoding));
             rigid_body.SetNameEn(file.ReadString(utf8_encoding));
             rigid_body.SetAssociatedBoneIndex(file.ReadIndex(bone_index_size));
-            interprete::pmx_rigid_body rb = file.Read<interprete::pmx_rigid_body>();
+            interprete::pmx_rigid_body rb
+                = file.Read<interprete::pmx_rigid_body>();
 
             rigid_body.SetCollisionGroup(rb.collision_group);
             rigid_body.GetCollisionMask() = rb.collision_mask;
@@ -359,9 +406,14 @@ inline Model* PmxReader::Read(FileReader &file) const {
             constraint.SetNameEn(file.ReadString(utf8_encoding));
             size_t dof_type = file.Read<std::uint8_t>();
             if(dof_type==0) {
-                constraint.SetAssociatedRigidBodyIndex(0, file.ReadIndex(rigid_body_index_size));
-                constraint.SetAssociatedRigidBodyIndex(1, file.ReadIndex(rigid_body_index_size));
-                interprete::pmx_constraint c = file.Read<interprete::pmx_constraint>();
+                constraint.SetAssociatedRigidBodyIndex(
+                    0, file.ReadIndex(rigid_body_index_size)
+                );
+                constraint.SetAssociatedRigidBodyIndex(
+                    1, file.ReadIndex(rigid_body_index_size)
+                );
+                interprete::pmx_constraint c
+                    = file.Read<interprete::pmx_constraint>();
                 constraint.SetPosition(c.position);
                 constraint.SetRotation(c.rotation);
                 constraint.SetPositionLowLimit(c.position_limit[0]);
@@ -371,7 +423,11 @@ inline Model* PmxReader::Read(FileReader &file) const {
                 constraint.SetSpringTranslate(c.stiffness[0]);
                 constraint.SetSpringRotate(c.stiffness[1]);
             } else {
-                throw exception(std::string("PmxReader: Only 6DOF spring joints are supported."));
+                throw exception(
+                    std::string(
+                        "PmxReader: Only 6DOF spring joints are supported."
+                    )
+                );
             }
         }
         model->Normalize();
@@ -380,6 +436,8 @@ inline Model* PmxReader::Read(FileReader &file) const {
     } catch(std::exception& e) {
         throw exception(std::string("PmxReader: Exception caught."), e);
     } catch(...) {
-        throw exception(std::string("PmxReader: Non-standard exception caught."));
+        throw exception(
+            std::string("PmxReader: Non-standard exception caught.")
+        );
     }
 }
