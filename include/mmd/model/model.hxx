@@ -225,8 +225,8 @@ namespace mmd {
             void SetVisible(bool visible);
             void SetControllable(bool controllable);
             void SetHasIK(bool has_ik);
-            void SetAppendRotate(bool acquire_rotate);
-            void SetAppendTranslate(bool acquire_translate);
+            void SetAppendRotate(bool append_rotate);
+            void SetAppendTranslate(bool append_translate);
             void SetRotAxisFixed(bool rot_axis_fixed);
             void SetUseLocalAxis(bool use_local_axis);
             void SetPostPhysics(bool post_physics);
@@ -724,6 +724,13 @@ namespace mmd {
         std::vector<Constraint> constraints_;
     };
 
+#include "model_skinning_operator_impl.hxx"
+#include "model_vertex_impl.hxx"
+#include "model_part_impl.hxx"
+#include "model_bone_impl.hxx"
+#include "model_morph_impl.hxx"
+#include "model_rigid_body_impl.hxx"
+#include "model_constraint_impl.hxx"
 #include "model_impl.hxx"
 
 } /* End of namespace mmd */
