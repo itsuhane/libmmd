@@ -572,7 +572,7 @@ namespace mmd {
             std::bitset<16> collision_mask_;
 
             RigidBodyShape shape_;
-            Vector3f dimension_;
+            Vector3f dimensions_;
 
             Vector3f position_;
             Vector3f rotation_;
