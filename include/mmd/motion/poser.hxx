@@ -94,7 +94,7 @@ namespace mmd {
                 TransformOrder(const Model &model);
                 bool operator() (size_t a, size_t b) const;
             private:
-                const Model* model_;
+                const Model *model_;
             };
         };
 
@@ -130,7 +130,7 @@ namespace mmd {
                 const std::pair<std::wstring, size_t> &match_pair
             ) const;
         private:
-            const Motion* motion_;
+            const Motion *motion_;
         };
 
         std::vector<std::pair<std::wstring, size_t>> bone_map_;

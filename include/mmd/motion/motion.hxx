@@ -85,10 +85,10 @@ namespace mmd {
             const std::wstring &bone_name, size_t frame
         );
 
-        const BoneMotion GetBoneMotion(
+        BoneMotion GetBoneMotion(
             const std::wstring &bone_name, size_t frame
         ) const;
-        const BoneMotion GetBoneMotion(
+        BoneMotion GetBoneMotion(
             const std::wstring &bone_name, double time
         ) const;
 
@@ -99,10 +99,10 @@ namespace mmd {
             const std::wstring &morph_name, size_t frame
         );
 
-        const MorphMotion GetMorphMotion(
+        MorphMotion GetMorphMotion(
             const std::wstring &morph_name, size_t frame
         ) const;
-        const MorphMotion GetMorphMotion(
+        MorphMotion GetMorphMotion(
             const std::wstring &morph_name, double time
         ) const;
 

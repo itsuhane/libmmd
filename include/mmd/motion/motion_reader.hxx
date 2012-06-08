@@ -13,7 +13,7 @@ namespace mmd {
 
     class MotionReader {
     public:
-        virtual Motion* Read(FileReader &file) const = 0;
+        virtual Motion *Read(FileReader &file) const = 0;
     };
 
 } /* End of namespace mmd */

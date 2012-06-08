@@ -144,7 +144,7 @@ Motion::GetMorphKeyframe(const std::wstring &morph_name, size_t frame) {
     return morph_motions_[morph_name][frame];
 }
 
-inline const Motion::BoneMotion
+inline Motion::BoneMotion
 Motion::GetBoneMotion(const std::wstring &bone_name, size_t frame) const {
     const std::map<size_t, BoneKeyframe>& keyframes
         = bone_motions_.find(bone_name)->second;
@@ -204,7 +204,7 @@ Motion::GetBoneMotion(const std::wstring &bone_name, size_t frame) const {
     }
 }
 
-inline const Motion::BoneMotion
+inline Motion::BoneMotion
 Motion::GetBoneMotion(const std::wstring &bone_name, double time) const {
     const std::map<size_t, BoneKeyframe>& keyframes
         = bone_motions_.find(bone_name)->second;

@@ -35,6 +35,29 @@ namespace mmd {
             std::uint32_t nframe;
             float weight;
         };
+
+        struct PACKED vmd_camera {
+            std::uint32_t nframe;
+            float focal_length;
+            Vector3f position;
+            Vector3f rotation;
+            std::int8_t interpolator[24];
+            float fov;
+            std::uint8_t orthographic;
+        };
+
+        struct vmd_light {
+            std::uint32_t nframe;
+            Vector3f color;
+            Vector3f position;
+        };
+
+        struct vmd_self_shadow {
+            std::uint32_t nframe;
+            std::uint8_t mode;
+            float distance;
+        };
+
 #include "../../util/unpack.hxx"
 
     } /* End of namespace interprete */
