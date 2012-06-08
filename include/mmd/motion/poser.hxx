@@ -24,16 +24,18 @@ namespace mmd {
 
         void ResetPosing();
 
-        void SetBonePose(size_t index, const Motion::BoneMotion& bone_motion);
-        void SetBonePose(const std::wstring &name, const Motion::BoneMotion& bone_motion);
+        void SetBonePose(size_t index, const Motion::BoneMotion &bone_motion);
+        void SetBonePose(
+            const std::wstring &name, const Motion::BoneMotion &bone_motion
+        );
 
         void PrePhysicsPosing();
         void PostPhysicsPosing();
 
         void Deform();
 
-        const Model& GetModel() const;
-        Model& GetModel();
+        const Model &GetModel() const;
+        Model &GetModel();
 
     private:
         struct BoneImage {
@@ -110,28 +112,30 @@ namespace mmd {
         std::vector<size_t> pre_physics_bones_;
         std::vector<size_t> post_physics_bones_;
 
-        Poser& operator=(Poser&);
+        Poser &operator=(Poser&);
     };
 
     class MotionPlayer {
     public:
-        MotionPlayer(const Motion& motion, Poser& poser);
+        MotionPlayer(const Motion &motion, Poser &poser);
         void SeekFrame(size_t frame);
         void SeekTime(double time);
 
     private:
-        MotionPlayer& operator=(const MotionPlayer&);
+        MotionPlayer &operator=(const MotionPlayer&);
         class MotionModelMismatchTest {
         public:
-            MotionModelMismatchTest(const Motion& motion);
-            bool operator()(const std::pair<std::wstring, size_t>& match_pair) const;
+            MotionModelMismatchTest(const Motion &motion);
+            bool operator()(
+                const std::pair<std::wstring, size_t> &match_pair
+            ) const;
         private:
             const Motion* motion_;
         };
 
         std::vector<std::pair<std::wstring, size_t>> bone_map_;
-        const Motion& motion_;
-        Poser& poser_;
+        const Motion &motion_;
+        Poser &poser_;
     };
 
 #include "poser_impl.hxx"

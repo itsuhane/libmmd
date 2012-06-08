@@ -15,13 +15,13 @@ namespace mmd {
     class PhysicsReactor {
     public:
         virtual ~PhysicsReactor() {}
-        virtual void AddPoser(Poser& poser) = 0;
-        virtual void RemovePoser(Poser& poser) = 0;
+        virtual void AddPoser(Poser &poser) = 0;
+        virtual void RemovePoser(Poser &poser) = 0;
         virtual void Reset() = 0;
         virtual void React(float step) = 0;
 
         virtual void SetGravityStrength(float strength) = 0;
-        virtual void SetGravityDirection(const Vector3f& direction) = 0;
+        virtual void SetGravityDirection(const Vector3f &direction) = 0;
 
         virtual float GetGravityStrength() const = 0;
         virtual Vector3f GetGravityDirection() const = 0;
@@ -30,10 +30,12 @@ namespace mmd {
         virtual bool IsHasFloor() const = 0;
     protected:
         typedef Poser::BoneImage& BoneImageReference;
-        static BoneImageReference GetPoserBoneImage(Poser& poser, size_t index);
+        static BoneImageReference GetPoserBoneImage(Poser &poser, size_t index);
     };
 
-    inline PhysicsReactor::BoneImageReference PhysicsReactor::GetPoserBoneImage(Poser& poser, size_t index) {
+    inline PhysicsReactor::BoneImageReference PhysicsReactor::GetPoserBoneImage(
+        Poser &poser, size_t index
+    ) {
         return poser.bone_images_[index];
     }
 

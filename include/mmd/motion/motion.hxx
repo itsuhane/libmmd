@@ -15,9 +15,9 @@ namespace mmd {
     public:
         class BoneMotion {
         public:
-            BoneMotion(const Vector3f& translation, const Vector4f& rotation);
-            const Vector3f& GetTranslation() const;
-            const Vector4f& GetRotation() const;
+            BoneMotion(const Vector3f &translation, const Vector4f &rotation);
+            const Vector3f &GetTranslation() const;
+            const Vector4f &GetRotation() const;
         private:
             Vector3f translation_;
             Vector4f rotation_;
@@ -35,20 +35,20 @@ namespace mmd {
         public:
             typedef Bezier<float> interpolator_type;
 
-            const Vector3f& GetTranslation() const;
+            const Vector3f &GetTranslation() const;
             void SetTranslation(const Vector3f &translation);
 
-            const Vector4f& GetRotation() const;
+            const Vector4f &GetRotation() const;
             void SetRotation(const Vector4f &rotation);
 
-            const interpolator_type& GetXInterpolator() const;
-            interpolator_type& GetXInterpolator();
-            const interpolator_type& GetYInterpolator() const;
-            interpolator_type& GetYInterpolator();
-            const interpolator_type& GetZInterpolator() const;
-            interpolator_type& GetZInterpolator();
-            const interpolator_type& GetRInterpolator() const;
-            interpolator_type& GetRInterpolator();
+            const interpolator_type &GetXInterpolator() const;
+            interpolator_type &GetXInterpolator();
+            const interpolator_type &GetYInterpolator() const;
+            interpolator_type &GetYInterpolator();
+            const interpolator_type &GetZInterpolator() const;
+            interpolator_type &GetZInterpolator();
+            const interpolator_type &GetRInterpolator() const;
+            interpolator_type &GetRInterpolator();
 
         private:
             Vector3f translation_;
@@ -67,31 +67,47 @@ namespace mmd {
             float GetWeight() const;
             void SetWeight(float weight);
 
-            const interpolator_type& GetWeightInterpolator() const;
-            interpolator_type& GetWeightInterpolator();
+            const interpolator_type &GetWeightInterpolator() const;
+            interpolator_type &GetWeightInterpolator();
 
         private:
             float weight_;
             interpolator_type w_interpolator_;
         };
 
-        const std::wstring& GetName() const;
+        const std::wstring &GetName() const;
         void SetName(const std::wstring &name);
 
-        const BoneKeyframe& GetBoneKeyframe(const std::wstring &bone_name, size_t frame) const;
-        BoneKeyframe& GetBoneKeyframe(const std::wstring &bone_name, size_t frame);
+        const BoneKeyframe &GetBoneKeyframe(
+            const std::wstring &bone_name, size_t frame
+        ) const;
+        BoneKeyframe &GetBoneKeyframe(
+            const std::wstring &bone_name, size_t frame
+        );
 
-        const BoneMotion GetBoneMotion(const std::wstring &bone_name, size_t frame) const;
-        const BoneMotion GetBoneMotion(const std::wstring &bone_name, double time) const;
+        const BoneMotion GetBoneMotion(
+            const std::wstring &bone_name, size_t frame
+        ) const;
+        const BoneMotion GetBoneMotion(
+            const std::wstring &bone_name, double time
+        ) const;
 
-        const MorphKeyframe& GetMorphKeyframe(const std::wstring &morph_name, size_t frame) const;
-        MorphKeyframe& GetMorphKeyframe(const std::wstring &morph_name, size_t frame);
+        const MorphKeyframe &GetMorphKeyframe(
+            const std::wstring &morph_name, size_t frame
+        ) const;
+        MorphKeyframe &GetMorphKeyframe(
+            const std::wstring &morph_name, size_t frame
+        );
 
-        const MorphMotion GetMorphMotion(const std::wstring &morph_name, size_t frame) const;
-        const MorphMotion GetMorphMotion(const std::wstring &morph_name, double time) const;
+        const MorphMotion GetMorphMotion(
+            const std::wstring &morph_name, size_t frame
+        ) const;
+        const MorphMotion GetMorphMotion(
+            const std::wstring &morph_name, double time
+        ) const;
 
-        bool IsBoneRegistered(const std::wstring& bone_name) const;
-        bool IsMorphRegistered(const std::wstring& morph_name) const;
+        bool IsBoneRegistered(const std::wstring &bone_name) const;
+        bool IsMorphRegistered(const std::wstring &morph_name) const;
 
     private:
         std::wstring name_;
