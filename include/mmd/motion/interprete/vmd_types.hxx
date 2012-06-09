@@ -46,18 +46,17 @@ namespace mmd {
             std::uint8_t orthographic;
         };
 
-        struct vmd_light {
+        struct PACKED vmd_light {
             std::uint32_t nframe;
             Vector3f color;
             Vector3f position;
         };
 
-        struct vmd_self_shadow {
+        struct PACKED vmd_self_shadow {
             std::uint32_t nframe;
             std::uint8_t mode;
             float distance;
         };
-
 #include "../../util/unpack.hxx"
 
     } /* End of namespace interprete */

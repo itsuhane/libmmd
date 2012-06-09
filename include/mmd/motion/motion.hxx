@@ -75,6 +75,42 @@ namespace mmd {
             interpolator_type w_interpolator_;
         };
 
+        class CameraKeyframe {
+        public:
+            typedef Bezier<float> interpolator_type;
+
+            float GetFOV() const;
+            void SetFOV(float fov);
+
+            float GetFocalLength() const;
+            void SetFocalLength(float focal_length);
+
+            bool IsOrthographic() const;
+            void SetOrthographic(bool orthographic);
+
+            const Vector3f &GetPosition() const;
+            void SetPosition(const Vector3f &position);
+
+            const Vector3f &GetRotation() const;
+            void SetRotation(const Vector3f &rotation);
+
+        private:
+            float fov_;
+            float focal_length_;
+
+            Vector3f position_;
+            Vector3f rotation_;
+
+            interpolator_type x_interpolator_;
+            interpolator_type y_interpolator_;
+            interpolator_type z_interpolator_;
+            interpolator_type rx_interpolator_;
+            interpolator_type ry_interpolator_;
+            interpolator_type rz_interpolator_;
+
+            bool orthographic_;
+        };
+
         const std::wstring &GetName() const;
         void SetName(const std::wstring &name);
 
