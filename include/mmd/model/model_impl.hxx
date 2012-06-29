@@ -8,9 +8,6 @@
 
 //// class Model
 
-const size_t
-Model::nil = size_t(-1);
-
 //// property: extra_uv
 inline void
 Model::SetExtraUVNumber(size_t uv_number) {

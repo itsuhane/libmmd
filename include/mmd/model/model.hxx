@@ -699,7 +699,7 @@ namespace mmd {
 
         void Normalize();
 
-        static const size_t nil;
+        static const size_t nil = size_t(-1);
     private:
         std::wstring name_en_;
         std::wstring name_;
