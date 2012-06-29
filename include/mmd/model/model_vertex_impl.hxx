@@ -9,27 +9,27 @@
 //// class Model::Vertex
 
 //// ctor
-template <template <typename V> class T> inline
-Model::Vertex<T>::Vertex(
-    typename T<Vector3f>::type coordinate,
-    typename T<Vector3f>::type normal,
-    typename T<Vector2f>::type uv_coord,
-    typename T<Vector4f>::type extra_uv_1,
-    typename T<Vector4f>::type extra_uv_2,
-    typename T<Vector4f>::type extra_uv_3,
-    typename T<Vector4f>::type extra_uv_4,
-    typename T<SkinningOperator>::type skinning_operator,
-    typename T<float>::type edge_scale
-) : coordinate_(coordinate),
-    normal_(normal),
-    uv_coord_(uv_coord),
-    extra_uv_coord_1_(extra_uv_1),
-    extra_uv_coord_2_(extra_uv_2),
-    extra_uv_coord_3_(extra_uv_3),
-    extra_uv_coord_4_(extra_uv_4),
-    skinning_operator_(skinning_operator),
-    edge_scale_(edge_scale)
-{}
+//template <template <typename V> class T> inline
+//Model::Vertex<T>::Vertex(
+//    typename T<Vector3f>::type coordinate,
+//    typename T<Vector3f>::type normal,
+//    typename T<Vector2f>::type uv_coord,
+//    typename T<Vector4f>::type extra_uv_1,
+//    typename T<Vector4f>::type extra_uv_2,
+//    typename T<Vector4f>::type extra_uv_3,
+//    typename T<Vector4f>::type extra_uv_4,
+//    typename T<SkinningOperator>::type skinning_operator,
+//    typename T<float>::type edge_scale
+//) : coordinate_(coordinate),
+//    normal_(normal),
+//    uv_coord_(uv_coord),
+//    extra_uv_coord_1_(extra_uv_1),
+//    extra_uv_coord_2_(extra_uv_2),
+//    extra_uv_coord_3_(extra_uv_3),
+//    extra_uv_coord_4_(extra_uv_4),
+//    skinning_operator_(skinning_operator),
+//    edge_scale_(edge_scale)
+//{}
 
 template <template <typename V> class T>
 template <template <typename V1> class T1> inline

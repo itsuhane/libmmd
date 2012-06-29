@@ -140,7 +140,16 @@ namespace mmd {
                 typename T<Vector4f>::type extra_uv_4,
                 typename T<SkinningOperator>::type skinning_operator,
                 typename T<float>::type edge_scale
-            );
+            ) : coordinate_(coordinate),
+                normal_(normal),
+                uv_coord_(uv_coord),
+                extra_uv_coord_1_(extra_uv_1),
+                extra_uv_coord_2_(extra_uv_2),
+                extra_uv_coord_3_(extra_uv_3),
+                extra_uv_coord_4_(extra_uv_4),
+                skinning_operator_(skinning_operator),
+                edge_scale_(edge_scale)
+            {}
 
             Vertex &operator=(const Vertex &v)/*=delete*/;
 
