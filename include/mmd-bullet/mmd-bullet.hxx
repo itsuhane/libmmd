@@ -39,14 +39,14 @@ namespace mmd {
     public:
         class PoserMotionState : public btMotionState {
         public:
-            PoserMotionState(Poser& poser, const Model::RigidBody& body, const btTransform& body_transform);
-            /*virtual*/ void getWorldTransform(btTransform& transform) const;
-            /*virtual*/ void setWorldTransform(const btTransform& transform);
+            PoserMotionState(Poser &poser, const Model::RigidBody &body, const btTransform &body_transform);
+            /*virtual*/ void getWorldTransform(btTransform &transform) const;
+            /*virtual*/ void setWorldTransform(const btTransform &transform);
             void Synchronize();
             void Fix();
             void Reset() const;
         private:
-            Poser& poser_;
+            Poser &poser_;
             bool passive_; // kinematics only
             bool strict_; // bones are not allowed to shake its length
             bool ghost_; // bones do not affect bone
@@ -55,19 +55,19 @@ namespace mmd {
             btTransform body_transform_;
             btTransform body_transform_inv_;
 
-            PoserMotionState& operator=(const PoserMotionState&);
+            PoserMotionState &operator=(const PoserMotionState&);
         };
 
         BulletPhysicsReactor();
         virtual ~BulletPhysicsReactor();
 
-        /*virtual*/ void AddPoser(Poser& poser);
-        /*virtual*/ void RemovePoser(Poser& poser);
+        /*virtual*/ void AddPoser(Poser &poser);
+        /*virtual*/ void RemovePoser(Poser &poser);
         /*virtual*/ void Reset();
         /*virtual*/ void React(float step);
 
         /*virtual*/ void SetGravityStrength(float strength);
-        /*virtual*/ void SetGravityDirection(const Vector3f& direction);
+        /*virtual*/ void SetGravityDirection(const Vector3f &direction);
 
         /*virtual*/ float GetGravityStrength() const;
         /*virtual*/ Vector3f GetGravityDirection() const;
@@ -76,15 +76,15 @@ namespace mmd {
         /*virtual*/ bool IsHasFloor() const;
 
     private:
-        btDefaultCollisionConfiguration* configuration_;
-        btCollisionDispatcher* dispatcher_;
-        btBroadphaseInterface* broadphase_;
-        btSequentialImpulseConstraintSolver* solver_;
-        btDiscreteDynamicsWorld* world_;
+        btDefaultCollisionConfiguration *configuration_;
+        btCollisionDispatcher *dispatcher_;
+        btBroadphaseInterface *broadphase_;
+        btSequentialImpulseConstraintSolver *solver_;
+        btDiscreteDynamicsWorld *world_;
 
-        btCollisionShape* ground_shape_;
-        btMotionState* ground_state_;
-        btRigidBody* ground_rigid_body_;
+        btCollisionShape *ground_shape_;
+        btMotionState *ground_state_;
+        btRigidBody *ground_rigid_body_;
 
         btVector3 gravity_direction_;
         btScalar gravity_strength_;

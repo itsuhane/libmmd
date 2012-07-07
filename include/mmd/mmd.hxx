@@ -56,10 +56,6 @@
 #include <string>
 #include <vector>
 
-#ifdef MMD_HAS_EXPERIMENTAL_CXX0X
-#include <type_traits>
-#endif
-#include <memory>
 #include <exception>
 
 #ifndef MMD_WINDOWS
@@ -89,8 +85,8 @@ namespace mmd {
 namespace mmd {
     class MMD {
     public:
-        static MMD& GetMMD();
-        TextureRegistry& GetTextureRegistry();
+        static MMD &GetMMD();
+        TextureRegistry &GetTextureRegistry();
     private:
         MMD();
         TextureRegistry texture_registry_;
@@ -108,10 +104,9 @@ namespace mmd {
 #include "reader/vmd_reader.hxx"
 
 namespace mmd {
-    //Model* ReadModel(FileReader& file);
 #include "mmd_facility_impl.hxx"
     namespace {
-        const MMD& mmd = MMD::GetMMD();
+        const MMD &mmd = MMD::GetMMD();
     }
 } /* End of namespace mmd */
 
