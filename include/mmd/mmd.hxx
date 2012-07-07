@@ -42,6 +42,7 @@
 #include <cstdio>
 #include <cstring>
 
+// VC++ is broken
 #ifdef MMD_USE_CSTDINT
 #include <cstdint>
 #endif
