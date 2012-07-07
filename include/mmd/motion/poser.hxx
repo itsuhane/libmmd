@@ -24,9 +24,9 @@ namespace mmd {
 
         void ResetPosing();
 
-        void SetBonePose(size_t index, const Motion::BoneMotion &bone_motion);
+        void SetBonePose(size_t index, const Motion::BonePose &bone_pose);
         void SetBonePose(
-            const std::wstring &name, const Motion::BoneMotion &bone_motion
+            const std::wstring &name, const Motion::BonePose &bone_pose
         );
 
         void PrePhysicsPosing();

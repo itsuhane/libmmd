@@ -7,26 +7,26 @@
 **/
 
 inline
-Motion::BoneMotion::BoneMotion(
+Motion::BonePose::BonePose(
     const Vector3f &translation, const Vector4f &rotation
 ) : translation_(translation), rotation_(rotation) {}
 
 inline const Vector3f&
-Motion::BoneMotion::GetTranslation() const {
+Motion::BonePose::GetTranslation() const {
     return translation_;
 }
 
 inline const Vector4f&
-Motion::BoneMotion::GetRotation() const {
+Motion::BonePose::GetRotation() const {
     return rotation_;
 }
 
 inline
-Motion::MorphMotion::MorphMotion(float weight)
+Motion::MorphPose::MorphPose(float weight)
   : weight_(weight) {}
 
 inline float
-Motion::MorphMotion::GetWeight() const {
+Motion::MorphPose::GetWeight() const {
     return weight_;
 }
 
@@ -144,20 +144,20 @@ Motion::GetMorphKeyframe(const std::wstring &morph_name, size_t frame) {
     return morph_motions_[morph_name][frame];
 }
 
-inline Motion::BoneMotion
-Motion::GetBoneMotion(const std::wstring &bone_name, size_t frame) const {
+inline Motion::BonePose
+Motion::GetBonePose(const std::wstring &bone_name, size_t frame) const {
     const std::map<size_t, BoneKeyframe>& keyframes
         = bone_motions_.find(bone_name)->second;
 
     if(keyframes.begin()->first>=frame) {
         const BoneKeyframe& key = keyframes.begin()->second;
-        return BoneMotion(key.GetTranslation(), key.GetRotation());
+        return BonePose(key.GetTranslation(), key.GetRotation());
     } else {
         std::map<size_t, BoneKeyframe>::const_iterator i = keyframes.end();
         i--;
         if(i->first<=frame) {
             const BoneKeyframe& key = i->second;
-            return BoneMotion(key.GetTranslation(), key.GetRotation());
+            return BonePose(key.GetTranslation(), key.GetRotation());
         } else {
             std::map<size_t, BoneKeyframe>::const_iterator right_bound
                 = keyframes.upper_bound(frame);
@@ -168,7 +168,7 @@ Motion::GetBoneMotion(const std::wstring &bone_name, size_t frame) const {
             const BoneKeyframe& left_key = right_bound->second;
 
             if(left_frame==frame) {
-                return BoneMotion(
+                return BonePose(
                     left_key.GetTranslation(), left_key.GetRotation()
                 );
             } else {
@@ -198,14 +198,14 @@ Motion::GetBoneMotion(const std::wstring &bone_name, size_t frame) const {
                 lambda = left_key.GetRInterpolator()[bary_pos];
                 rotation = NLerp(l_rotation, r_rotation)[lambda];
 
-                return BoneMotion(translation, rotation);
+                return BonePose(translation, rotation);
             }
         }
     }
 }
 
-inline Motion::BoneMotion
-Motion::GetBoneMotion(const std::wstring &bone_name, double time) const {
+inline Motion::BonePose
+Motion::GetBonePose(const std::wstring &bone_name, double time) const {
     const std::map<size_t, BoneKeyframe>& keyframes
         = bone_motions_.find(bone_name)->second;
 
@@ -213,13 +213,13 @@ Motion::GetBoneMotion(const std::wstring &bone_name, double time) const {
 
     if(keyframes.begin()->first>=dframe) {
         const BoneKeyframe& key = keyframes.begin()->second;
-        return BoneMotion(key.GetTranslation(), key.GetRotation());
+        return BonePose(key.GetTranslation(), key.GetRotation());
     } else {
         std::map<size_t, BoneKeyframe>::const_iterator i = keyframes.end();
         i--;
         if(i->first<=dframe) {
             const BoneKeyframe& key = i->second;
-            return BoneMotion(key.GetTranslation(), key.GetRotation());
+            return BonePose(key.GetTranslation(), key.GetRotation());
         } else {
             std::map<size_t, BoneKeyframe>::const_iterator right_bound
                 = keyframes.upper_bound(size_t(dframe));
@@ -254,7 +254,7 @@ Motion::GetBoneMotion(const std::wstring &bone_name, double time) const {
             lambda = left_key.GetRInterpolator()[bary_pos];
             rotation = NLerp(l_rotation, r_rotation)[lambda];
 
-            return BoneMotion(translation, rotation);
+            return BonePose(translation, rotation);
         }
     }
 }

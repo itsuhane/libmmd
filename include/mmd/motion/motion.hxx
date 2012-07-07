@@ -13,9 +13,9 @@ namespace mmd {
 
     class Motion {
     public:
-        class BoneMotion {
+        class BonePose {
         public:
-            BoneMotion(const Vector3f &translation, const Vector4f &rotation);
+            BonePose(const Vector3f &translation, const Vector4f &rotation);
             const Vector3f &GetTranslation() const;
             const Vector4f &GetRotation() const;
         private:
@@ -23,9 +23,9 @@ namespace mmd {
             Vector4f rotation_;
         };
 
-        class MorphMotion {
+        class MorphPose {
         public:
-            MorphMotion(float weight);
+            MorphPose(float weight);
             float GetWeight() const;
         private:
             float weight_;
@@ -121,10 +121,10 @@ namespace mmd {
             const std::wstring &bone_name, size_t frame
         );
 
-        BoneMotion GetBoneMotion(
+        BonePose GetBonePose(
             const std::wstring &bone_name, size_t frame
         ) const;
-        BoneMotion GetBoneMotion(
+        BonePose GetBonePose(
             const std::wstring &bone_name, double time
         ) const;
 
@@ -135,10 +135,10 @@ namespace mmd {
             const std::wstring &morph_name, size_t frame
         );
 
-        MorphMotion GetMorphMotion(
+        MorphPose GetMorphPose(
             const std::wstring &morph_name, size_t frame
         ) const;
-        MorphMotion GetMorphMotion(
+        MorphPose GetMorphPose(
             const std::wstring &morph_name, double time
         ) const;
 
@@ -150,6 +150,14 @@ namespace mmd {
         std::map<std::wstring, std::map<size_t, BoneKeyframe>> bone_motions_;
         std::map<std::wstring, std::map<size_t, MorphKeyframe>> morph_motions_;
     };
+
+	class Pose {
+	public:
+
+	private:
+		std::map<std::string, Motion::BonePose> bone_poses_;
+		std::map<std::string, Motion::MorphPose> morph_poses_;
+	};
 
 #include "motion_impl.hxx"
 

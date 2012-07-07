@@ -378,6 +378,30 @@ Model::NewConstraint() {
     return constraints_.back();
 }
 
+//// Clear()
+inline void
+Model::Clear() {
+    name_en_.clear();
+    name_.clear();
+
+    description_en_.clear();
+    description_.clear();
+
+    vertex_info_.coordinates_.clear();
+    vertex_info_.normals_.clear();
+    vertex_info_.uv_coords_.clear();
+    vertex_info_.extra_uv_coords_.clear();
+    vertex_info_.skinning_operators_.clear();
+    vertex_info_.edge_scales_.clear();
+
+    triangles_.clear();
+    parts_.clear();
+    bones_.clear();
+    morphs_.clear();
+    rigid_bodies_.clear();
+    constraints_.clear();
+}
+
 //// Normalize()
 inline void
 Model::Normalize() {

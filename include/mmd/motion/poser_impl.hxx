@@ -384,15 +384,15 @@ inline void Poser::Deform() {
 inline const Model& Poser::GetModel() const { return model_; }
 inline Model& Poser::GetModel() { return model_; }
 
-inline void Poser::SetBonePose(size_t index, const Motion::BoneMotion& bone_motion) {
-    bone_images_[index].translation_ = bone_motion.GetTranslation();
-    bone_images_[index].rotation_ = bone_motion.GetRotation();
+inline void Poser::SetBonePose(size_t index, const Motion::BonePose& bone_pose) {
+    bone_images_[index].translation_ = bone_pose.GetTranslation();
+    bone_images_[index].rotation_ = bone_pose.GetRotation();
 }
 
-inline void Poser::SetBonePose(const std::wstring &name, const Motion::BoneMotion& bone_motion) {
+inline void Poser::SetBonePose(const std::wstring &name, const Motion::BonePose& bone_pose) {
     std::map<std::wstring, size_t>::iterator i = bone_name_map_.find(name);
     if(i!=bone_name_map_.end()) {
-        SetBonePose(i->second, bone_motion);
+        SetBonePose(i->second, bone_pose);
     }
 }
 
@@ -431,13 +431,13 @@ inline MotionPlayer::MotionPlayer(const Motion& motion, Poser& poser) : motion_(
 
 inline void MotionPlayer::SeekFrame(size_t frame) {
     for(std::vector<std::pair<std::wstring, size_t>>::iterator i=bone_map_.begin();i!=bone_map_.end();++i) {
-        poser_.SetBonePose(i->second, motion_.GetBoneMotion(i->first, frame));
+        poser_.SetBonePose(i->second, motion_.GetBonePose(i->first, frame));
     }
 }
 
 inline void MotionPlayer::SeekTime(double time) {
     for(std::vector<std::pair<std::wstring, size_t>>::iterator i=bone_map_.begin();i!=bone_map_.end();++i) {
-        poser_.SetBonePose(i->second, motion_.GetBoneMotion(i->first, time));
+        poser_.SetBonePose(i->second, motion_.GetBonePose(i->first, time));
     }
 }
 

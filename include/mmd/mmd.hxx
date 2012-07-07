@@ -78,7 +78,7 @@ namespace mmd {
 } /* End of namespace mmd */
 
 #include "util/texture.hxx"
-#include "model/material.hxx"
+#include "material/material.hxx"
 
 #include "model/model.hxx"
 #include "motion/motion.hxx"
@@ -97,15 +97,18 @@ namespace mmd {
     };
 }
 
-#include "model/model_reader.hxx"
-#include "model/pmd_reader.hxx"
-#include "model/pmx_reader.hxx"
+#include "reader/model_reader.hxx"
+#include "reader/motion_reader.hxx"
+#include "reader/pose_reader.hxx"
+#include "reader/camera_motion_reader.hxx"
+#include "reader/light_motion_reader.hxx"
 
-#include "motion/motion_reader.hxx"
-#include "motion/vmd_reader.hxx"
+#include "reader/pmd_reader.hxx"
+#include "reader/pmx_reader.hxx"
+#include "reader/vmd_reader.hxx"
 
 namespace mmd {
-    Model* ReadModel(FileReader& file);
+    //Model* ReadModel(FileReader& file);
 #include "mmd_facility_impl.hxx"
     namespace {
         const MMD& mmd = MMD::GetMMD();
