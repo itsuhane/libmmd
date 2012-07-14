@@ -112,7 +112,7 @@ namespace mmd {
 namespace mmd {
 #include "mmd_facility_impl.hxx"
     namespace {
-        const MMD &mmd = MMD::GetMMD();
+        MMD &mmd = MMD::GetMMD();
     }
 } /* End of namespace mmd */
 
