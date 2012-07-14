@@ -144,6 +144,13 @@ Motion::GetMorphKeyframe(const std::wstring &morph_name, size_t frame) {
     return morph_motions_[morph_name][frame];
 }
 
+inline void
+Motion::Clear() {
+    name_.clear();
+    bone_motions_.clear();
+    morph_motions_.clear();
+}
+
 inline Motion::BonePose
 Motion::GetBonePose(const std::wstring &bone_name, size_t frame) const {
     const std::map<size_t, BoneKeyframe>& keyframes
@@ -255,6 +262,84 @@ Motion::GetBonePose(const std::wstring &bone_name, double time) const {
             rotation = NLerp(l_rotation, r_rotation)[lambda];
 
             return BonePose(translation, rotation);
+        }
+    }
+}
+
+inline Motion::MorphPose
+Motion::GetMorphPose(const std::wstring &morph_name, size_t frame) const {
+
+    const std::map<size_t, MorphKeyframe>& keyframes
+        = morph_motions_.find(morph_name)->second;
+
+    if(keyframes.begin()->first>=frame) {
+        const MorphKeyframe& key = keyframes.begin()->second;
+        return MorphPose(key.GetWeight());
+    } else {
+        std::map<size_t, MorphKeyframe>::const_iterator i = keyframes.end();
+        i--;
+        if(i->first<=frame) {
+            const MorphKeyframe& key = i->second;
+            return MorphPose(key.GetWeight());
+        } else {
+            std::map<size_t, MorphKeyframe>::const_iterator right_bound
+                = keyframes.upper_bound(frame);
+            size_t right_frame = right_bound->first;
+            const MorphKeyframe& right_key = right_bound->second;
+            right_bound--;
+            size_t left_frame = right_bound->first;
+            const MorphKeyframe& left_key = right_bound->second;
+
+            if(left_frame==frame) {
+                return MorphPose(left_key.GetWeight());
+            } else {
+                float bary_pos = (
+                    (float)(frame-left_frame)/(float)(right_frame-left_frame)
+                );
+
+                float l_weight = left_key.GetWeight();
+                float r_weight = right_key.GetWeight();
+                float lambda = left_key.GetWeightInterpolator()[bary_pos];
+
+                return MorphPose(l_weight*(1-lambda)+r_weight*lambda);
+            }
+        }
+    }
+}
+
+inline Motion::MorphPose
+Motion::GetMorphPose(const std::wstring &morph_name, double time) const {
+    const std::map<size_t, MorphKeyframe>& keyframes
+        = morph_motions_.find(morph_name)->second;
+
+    double dframe = time * 30.0;
+
+    if(keyframes.begin()->first>=dframe) {
+        const MorphKeyframe& key = keyframes.begin()->second;
+        return MorphPose(key.GetWeight());
+    } else {
+        std::map<size_t, MorphKeyframe>::const_iterator i = keyframes.end();
+        i--;
+        if(i->first<=dframe) {
+            const MorphKeyframe& key = i->second;
+            return MorphPose(key.GetWeight());
+        } else {
+            std::map<size_t, MorphKeyframe>::const_iterator right_bound
+                = keyframes.upper_bound(size_t(dframe));
+            size_t right_frame = right_bound->first;
+            const MorphKeyframe& right_key = right_bound->second;
+            right_bound--;
+            size_t left_frame = right_bound->first;
+            const MorphKeyframe& left_key = right_bound->second;
+
+            float bary_pos
+                = (float)((dframe-left_frame)/(right_frame-left_frame));
+
+            float l_weight = left_key.GetWeight();
+            float r_weight = right_key.GetWeight();
+            float lambda = left_key.GetWeightInterpolator()[bary_pos];
+
+            return MorphPose(l_weight*(1-lambda)+r_weight*lambda);
         }
     }
 }

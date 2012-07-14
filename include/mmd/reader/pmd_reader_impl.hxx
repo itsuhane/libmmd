@@ -27,7 +27,7 @@ PmdReader::ReadModel(Model &model) {
             throw exception(std::string("PmdReader: File is not a PMD file_."));
         }
 
-		model.Clear();
+        model.Clear();
 
         model.SetName(ShiftJISToUTF16String(header.info.name));
         model.SetDescription(ShiftJISToUTF16String(header.info.description));
@@ -184,7 +184,7 @@ PmdReader::ReadModel(Model &model) {
 
         std::sort(raw_iks.begin(), raw_iks.end());
 
-        size_t center_bone_index = Model::nil;
+        size_t center_bone_index = nil;
 
         for(size_t i=0; i<bone_num; ++i) {
             Model::Bone &bone = model.NewBone();
@@ -199,7 +199,7 @@ PmdReader::ReadModel(Model &model) {
             if(i!=(size_t)(raw_bone.parent_id)) {
                 bone.SetParentIndex(raw_bone.parent_id);
             } else {
-                bone.SetParentIndex(Model::nil);
+                bone.SetParentIndex(nil);
             }
 
             bone.SetTransformLevel(0);
@@ -358,7 +358,7 @@ PmdReader::ReadModel(Model &model) {
         }
 
         size_t face_num = file_.Read<std::uint16_t>();
-        size_t base_morph_index = Model::nil;
+        size_t base_morph_index = nil;
         for(size_t i=0;i<face_num;++i) {
             Model::Morph &morph = model.NewMorph();
             interprete::pmd_face_preamble fp
@@ -377,7 +377,7 @@ PmdReader::ReadModel(Model &model) {
             }
         }
 
-        if(base_morph_index!=Model::nil) {
+        if(base_morph_index!=nil) {
             const Model::Morph& base_morph = model.GetMorph(base_morph_index);
             for(size_t i=0;i<face_num;++i) {
                 if(i==base_morph_index) {
@@ -480,7 +480,7 @@ PmdReader::ReadModel(Model &model) {
                 if(toon_texture_ids[i]<10) {
                     material.SetToon(custom_textures[toon_texture_ids[i]]);
                 } else {
-                    material.SetToon(&(registry.GetGlobalToon(Model::nil)));
+                    material.SetToon(&(registry.GetGlobalToon(nil)));
                 }
             }
         }
@@ -499,7 +499,7 @@ PmdReader::ReadModel(Model &model) {
                 if(rb.bone_index<bone_num) {
                     rigid_body.SetAssociatedBoneIndex(rb.bone_index);
                 } else {
-                    if(center_bone_index==Model::nil) {
+                    if(center_bone_index==nil) {
                         rigid_body.SetAssociatedBoneIndex(0);
                     } else {
                         rigid_body.SetAssociatedBoneIndex(center_bone_index);

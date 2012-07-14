@@ -28,7 +28,7 @@ PmxReader::ReadModel(Model &model) {
             );
         }
 
-		model.Clear();
+        model.Clear();
 
         bool utf8_encoding = file_.Read<std::uint8_t>()>0;
 
@@ -264,6 +264,7 @@ PmxReader::ReadModel(Model &model) {
         }
 
         size_t morph_num = (size_t)file_.Read<std::int32_t>();
+        size_t base_morph_index = nil;
         for(size_t i=0;i<morph_num;++i) {
             Model::Morph &morph = model.NewMorph();
             morph.SetName(file_.ReadString(utf8_encoding));
@@ -271,6 +272,9 @@ PmxReader::ReadModel(Model &model) {
             morph.SetCategory(
                 (Model::Morph::MorphCategory)file_.Read<std::uint8_t>()
             );
+            if(morph.GetCategory()==Model::Morph::MORPH_CAT_SYSTEM) {
+                base_morph_index = i;
+            }
             morph.SetType((Model::Morph::MorphType)file_.Read<std::uint8_t>());
             size_t morph_data_num = (size_t)file_.Read<std::int32_t>();
             switch(morph.GetType()) {
@@ -350,6 +354,10 @@ PmxReader::ReadModel(Model &model) {
             default:
                 throw exception(std::string("PmxReader: Unknown morph type."));
             }
+        }
+
+        if(base_morph_index!=nil) {
+            // TODO : rectify system-reserved category
         }
 
         size_t entry_item_num = (size_t)file_.Read<std::int32_t>();

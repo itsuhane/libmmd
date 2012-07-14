@@ -14,9 +14,14 @@
           http://www6.atwiki.jp/vpvpwiki/pages/288.html
 **/
 inline Poser::Poser(Model &model) : model_(model) {
+
+    /***** Create Pose Image *****/
+
     size_t vertex_num = model_.GetVertexNum();
     pose_image.coordinates.insert(pose_image.coordinates.end(), vertex_num, Vector3f());
     pose_image.normals.insert(pose_image.normals.end(), vertex_num, Vector3f());
+
+    /***** Create Bone Images *****/
 
     size_t bone_num = model_.GetBoneNum();
     bone_images_.insert(bone_images_.end(), bone_num, BoneImage());
@@ -102,6 +107,18 @@ inline Poser::Poser(Model &model) : model_(model) {
     std::sort(pre_physics_bones_.begin(), pre_physics_bones_.end(), order);
     std::sort(post_physics_bones_.begin(), post_physics_bones_.end(), order);
 
+    /***** Create Morph Images *****/
+
+    size_t morph_num = model_.GetMorphNum();
+    morph_images_.insert(morph_images_.end(), morph_num, MorphImage());
+
+    for(size_t i=0;i<morph_num;++i) {
+        const Model::Morph& morph = model_.GetMorph(i);
+        morph_name_map_[morph.GetName()] = i;
+    }
+
+    /***** 1st Posing *****/
+
     ResetPosing();
     Deform();
 }
@@ -110,6 +127,9 @@ inline void Poser::ResetPosing() {
     for(std::vector<BoneImage>::iterator i=bone_images_.begin();i!=bone_images_.end();++i) {
         i->rotation_.q.MakeIdentity();
         i->translation_.MakeZero();
+    }
+    for(std::vector<MorphImage>::iterator i=morph_images_.begin();i!=morph_images_.end();++i) {
+        i->morph_rate_ = 0;
     }
     PrePhysicsPosing();
     PostPhysicsPosing();
@@ -301,8 +321,31 @@ inline void Poser::UpdateBoneSkinningMatrix(const std::vector<size_t> &list) {
     }
 }
 
+inline void Poser::UpdateBoneMorphTransform(size_t index, float rate) {
+    if(rate<mmd_math_const_eps) {
+        return;
+    }
+    const Model::Morph &morph = model_.GetMorph(index);
+    if(morph.GetType()==Model::Morph::MORPH_TYPE_BONE) {
+        for(size_t i=0;i<morph.GetMorphDataNum();++i) {
+            const Model::Morph::MorphData::BoneMorph &data = morph.GetMorphData(i).GetBoneMorph();
+            BoneImage &bone_image = bone_images_[data.GetBoneIndex()];
+            bone_image.morph_translation_ = bone_image.morph_translation_+data.GetTranslation()*rate;
+            bone_image.morph_rotation_.q = bone_image.morph_rotation_.q*SLerp(Quaternionf::Identity(), data.GetRotation().q)[rate];
+        }
+    } else if(morph.GetType()==Model::Morph::MORPH_TYPE_GROUP) {
+        for(size_t i=0;i<morph.GetMorphDataNum();++i) {
+            const Model::Morph::MorphData::GroupMorph &data = morph.GetMorphData(i).GetGroupMorph();
+            UpdateBoneMorphTransform(data.GetMorphIndex(), data.GetMorphRate()*rate);
+        }
+    }
+}
+
 inline void Poser::PrePhysicsPosing() {
     for(std::vector<BoneImage>::iterator i = bone_images_.begin();i!=bone_images_.end();++i) {
+        i->morph_translation_.MakeZero();
+        i->morph_rotation_.q.MakeIdentity();
+
         i->local_matrix_.MakeIdentity();
 
         i->pre_ik_rotation_.q.MakeIdentity();
@@ -310,6 +353,9 @@ inline void Poser::PrePhysicsPosing() {
 
         i->total_rotation_.q.MakeIdentity();
         i->total_translation_.MakeZero();
+    }
+    for(size_t i=0;i<morph_images_.size();++i) {
+        UpdateBoneMorphTransform(i, morph_images_[i].morph_rate_);
     }
     UpdateBoneTransform(pre_physics_bones_);
     UpdateBoneSkinningMatrix(pre_physics_bones_);
@@ -324,9 +370,17 @@ inline void Poser::Deform() {
     size_t vertex_num = model_.GetVertexNum();
     for(size_t i=0;i<vertex_num;++i) {
         Model::Vertex<ref> vertex = model_.GetVertex(i);
-        const Vector3f &coordinate = vertex.GetCoordinate();
-        const Vector3f &normal = vertex.GetNormal();
+        pose_image.coordinates[i] = vertex.GetCoordinate();
+        pose_image.normals[i] = vertex.GetNormal();
+    }
+
+    // TODO : Vertex Morph Here
+
+    for(size_t i=0;i<vertex_num;++i) {
+        Model::Vertex<ref> vertex = model_.GetVertex(i);
         const Model::SkinningOperator& op = vertex.GetSkinningOperator();
+        const Vector3f &coordinate = pose_image.coordinates[i];
+        const Vector3f &normal = pose_image.normals[i];
         switch(op.GetSkinningType()) {
         case Model::SkinningOperator::SKINNING_BDEF1:
             {
@@ -396,6 +450,17 @@ inline void Poser::SetBonePose(const std::wstring &name, const Motion::BonePose&
     }
 }
 
+inline void Poser::SetMorphPose(size_t index, const Motion::MorphPose &morph_pose) {
+    morph_images_[index].morph_rate_ = morph_pose.GetWeight();
+}
+
+inline void Poser::SetMorphPose(const std::wstring &name, const Motion::MorphPose &morph_pose) {
+    std::map<std::wstring, size_t>::iterator i = morph_name_map_.find(name);
+    if(i!=morph_name_map_.end()) {
+        SetMorphPose(i->second, morph_pose);
+    }
+}
+
 inline Poser::BoneImage::BoneImage() : ik_link_(false) {
     rotation_.q.MakeIdentity();
     translation_.MakeZero();
@@ -418,6 +483,8 @@ inline bool Poser::BoneImage::TransformOrder::operator()(size_t a, size_t b) con
         return a<b;
     }
 }
+
+inline Poser::MorphImage::MorphImage() : morph_rate_(0.0f) {}
 
 inline MotionPlayer::MotionPlayer(const Motion& motion, Poser& poser) : motion_(motion), poser_(poser) {
     const Model& model = poser_.GetModel();

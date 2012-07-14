@@ -75,41 +75,41 @@ namespace mmd {
             interpolator_type w_interpolator_;
         };
 
-        class CameraKeyframe {
-        public:
-            typedef Bezier<float> interpolator_type;
+        //class CameraKeyframe {
+        //public:
+        //    typedef Bezier<float> interpolator_type;
 
-            float GetFOV() const;
-            void SetFOV(float fov);
+        //    float GetFOV() const;
+        //    void SetFOV(float fov);
 
-            float GetFocalLength() const;
-            void SetFocalLength(float focal_length);
+        //    float GetFocalLength() const;
+        //    void SetFocalLength(float focal_length);
 
-            bool IsOrthographic() const;
-            void SetOrthographic(bool orthographic);
+        //    bool IsOrthographic() const;
+        //    void SetOrthographic(bool orthographic);
 
-            const Vector3f &GetPosition() const;
-            void SetPosition(const Vector3f &position);
+        //    const Vector3f &GetPosition() const;
+        //    void SetPosition(const Vector3f &position);
 
-            const Vector3f &GetRotation() const;
-            void SetRotation(const Vector3f &rotation);
+        //    const Vector3f &GetRotation() const;
+        //    void SetRotation(const Vector3f &rotation);
 
-        private:
-            float fov_;
-            float focal_length_;
+        //private:
+        //    float fov_;
+        //    float focal_length_;
 
-            Vector3f position_;
-            Vector3f rotation_;
+        //    Vector3f position_;
+        //    Vector3f rotation_;
 
-            interpolator_type x_interpolator_;
-            interpolator_type y_interpolator_;
-            interpolator_type z_interpolator_;
-            interpolator_type rx_interpolator_;
-            interpolator_type ry_interpolator_;
-            interpolator_type rz_interpolator_;
+        //    interpolator_type x_interpolator_;
+        //    interpolator_type y_interpolator_;
+        //    interpolator_type z_interpolator_;
+        //    interpolator_type rx_interpolator_;
+        //    interpolator_type ry_interpolator_;
+        //    interpolator_type rz_interpolator_;
 
-            bool orthographic_;
-        };
+        //    bool orthographic_;
+        //};
 
         const std::wstring &GetName() const;
         void SetName(const std::wstring &name);
@@ -145,19 +145,21 @@ namespace mmd {
         bool IsBoneRegistered(const std::wstring &bone_name) const;
         bool IsMorphRegistered(const std::wstring &morph_name) const;
 
+        void Clear();
+
     private:
         std::wstring name_;
         std::map<std::wstring, std::map<size_t, BoneKeyframe>> bone_motions_;
         std::map<std::wstring, std::map<size_t, MorphKeyframe>> morph_motions_;
     };
 
-	class Pose {
-	public:
+    class Pose {
+    public:
 
-	private:
-		std::map<std::string, Motion::BonePose> bone_poses_;
-		std::map<std::string, Motion::MorphPose> morph_poses_;
-	};
+    private:
+        std::map<std::string, Motion::BonePose> bone_poses_;
+        std::map<std::string, Motion::MorphPose> morph_poses_;
+    };
 
 #include "motion_impl.hxx"
 

@@ -703,14 +703,12 @@ namespace mmd {
         const float *GetUVCoordPointer() const;
         const std::uint32_t *GetTrianglePointer() const;
 
-		void Clear();
+        void Clear();
 
         bool Validate() const;
         bool Validate(std::nothrow_t) const throw();
 
         void Normalize();
-
-        static const size_t nil = size_t(-1);
     private:
         std::wstring name_en_;
         std::wstring name_;

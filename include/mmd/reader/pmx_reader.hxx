@@ -15,10 +15,10 @@ namespace mmd {
 
     class PmxReader : public ModelReader {
     public:
-		PmxReader(FileReader &file);
+        PmxReader(FileReader &file);
         /*virtual*/ void ReadModel(Model &model);
-	private:
-		FileReader &file_;
+    private:
+        FileReader &file_;
     };
 
 #include "pmx_reader_impl.hxx"

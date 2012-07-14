@@ -14,8 +14,10 @@ inline void VmdReader::ReadMotion(Motion &motion) {
 
         std::string magic = header.magic;
         if(magic!="Vocaloid Motion Data 0002") {
-            throw exception(std::string("VmdReader: File is not a VMD file_."));
+            throw exception(std::string("VmdReader: File is not a VMD file."));
         }
+
+        motion.Clear();
 
         motion.SetName(ShiftJISToUTF16String(header.name));
 
@@ -66,6 +68,8 @@ inline void VmdReader::ReadMotion(Motion &motion) {
             Motion::MorphKeyframe &keyframe = motion.GetMorphKeyframe(ShiftJISToUTF16String(m.morph_name), m.nframe);
             keyframe.SetWeight(m.weight);
         }
+
+        camera_motion_shift_ = file_.GetPosition();
 
     } catch(std::exception& e) {
         throw exception(std::string("VmdReader: Exception caught."), e);

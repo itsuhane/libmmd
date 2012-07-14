@@ -15,10 +15,12 @@ namespace mmd {
 
     class VmdReader : public MotionReader, public CameraMotionReader, public LightMotionReader {
     public:
-		VmdReader(FileReader &file) : file_(file) {}
+        VmdReader(FileReader &file) : file_(file), camera_motion_shift_(nil), light_motion_shift_(nil) {}
         /*virtual*/ void ReadMotion(Motion &motion);
-	private:
-		FileReader &file_;
+    private:
+        FileReader &file_;
+        mutable size_t camera_motion_shift_;
+        mutable size_t light_motion_shift_;
     };
 
 #include "vmd_reader_impl.hxx"

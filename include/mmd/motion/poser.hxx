@@ -29,6 +29,11 @@ namespace mmd {
             const std::wstring &name, const Motion::BonePose &bone_pose
         );
 
+        void SetMorphPose(size_t index, const Motion::MorphPose &morph_pose);
+        void SetMorphPose(
+            const std::wstring &name, const Motion::MorphPose &morph_pose
+        );
+
         void PrePhysicsPosing();
         void PostPhysicsPosing();
 
@@ -38,6 +43,7 @@ namespace mmd {
         Model &GetModel();
 
     private:
+
         struct BoneImage {
             BoneImage();
 
@@ -98,16 +104,27 @@ namespace mmd {
             };
         };
 
+        struct MorphImage {
+            MorphImage();
+            float morph_rate_;
+        };
+
         std::vector<BoneImage> bone_images_;
+        std::vector<MorphImage> morph_images_;
 
         void UpdateBoneTransform(size_t index);
         void UpdateBoneTransform(const std::vector<size_t> &list);
 
         void UpdateBoneSkinningMatrix(const std::vector<size_t> &list);
 
+        void UpdateVertexMorphTransform(size_t index, float rate);
+        void UpdateBoneMorphTransform(size_t index, float rate);
+        //void UpdateUVMorphTransform(size_t index, float rate);
+
         Model &model_;
 
         std::map<std::wstring, size_t> bone_name_map_;
+        std::map<std::wstring, size_t> morph_name_map_;
 
         std::vector<size_t> pre_physics_bones_;
         std::vector<size_t> post_physics_bones_;

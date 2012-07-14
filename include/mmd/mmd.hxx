@@ -72,6 +72,11 @@ namespace mmd {
     typedef Vector3D<float> Vector3f;
     typedef Vector4D<float> Vector4f;
     typedef Matrix4x4<float> Matrix4f;
+
+    namespace {
+        const size_t nil = size_t(-1);
+    }
+
 } /* End of namespace mmd */
 
 #include "util/texture.hxx"
