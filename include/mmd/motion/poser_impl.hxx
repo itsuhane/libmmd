@@ -16,13 +16,14 @@
 inline Poser::Poser(Model &model) : model_(model) {
 
     /***** Create Pose Image *****/
-
     size_t vertex_num = model_.GetVertexNum();
     pose_image.coordinates.insert(pose_image.coordinates.end(), vertex_num, Vector3f());
     pose_image.normals.insert(pose_image.normals.end(), vertex_num, Vector3f());
 
-    /***** Create Bone Images *****/
+    /***** Create Vertex Images *****/
+    vertex_images_.insert(vertex_images_.end(), vertex_num, Vector3f());
 
+    /***** Create Bone Images *****/
     size_t bone_num = model_.GetBoneNum();
     bone_images_.insert(bone_images_.end(), bone_num, BoneImage());
 
@@ -107,10 +108,14 @@ inline Poser::Poser(Model &model) : model_(model) {
     std::sort(pre_physics_bones_.begin(), pre_physics_bones_.end(), order);
     std::sort(post_physics_bones_.begin(), post_physics_bones_.end(), order);
 
-    /***** Create Morph Images *****/
+    /***** Create Material Images *****/
+    size_t material_num = model_.GetPartNum();
+    material_mul_images_.insert(material_mul_images_.end(), material_num, MaterialImage(1.0f));
+    material_add_images_.insert(material_add_images_.end(), material_num, MaterialImage(0.0f));
 
+    /***** Create Morph Rates *****/
     size_t morph_num = model_.GetMorphNum();
-    morph_images_.insert(morph_images_.end(), morph_num, MorphImage());
+    morph_rates_.insert(morph_rates_.end(), morph_num, 0.0f);
 
     for(size_t i=0;i<morph_num;++i) {
         const Model::Morph& morph = model_.GetMorph(i);
@@ -118,18 +123,17 @@ inline Poser::Poser(Model &model) : model_(model) {
     }
 
     /***** 1st Posing *****/
-
     ResetPosing();
     Deform();
 }
 
 inline void Poser::ResetPosing() {
+    for(std::vector<float>::iterator i=morph_rates_.begin();i!=morph_rates_.end();++i) {
+        *i = 0;
+    }
     for(std::vector<BoneImage>::iterator i=bone_images_.begin();i!=bone_images_.end();++i) {
         i->rotation_.q.MakeIdentity();
         i->translation_.MakeZero();
-    }
-    for(std::vector<MorphImage>::iterator i=morph_images_.begin();i!=morph_images_.end();++i) {
-        i->morph_rate_ = 0;
     }
     PrePhysicsPosing();
     PostPhysicsPosing();
@@ -321,27 +325,44 @@ inline void Poser::UpdateBoneSkinningMatrix(const std::vector<size_t> &list) {
     }
 }
 
-inline void Poser::UpdateBoneMorphTransform(size_t index, float rate) {
+inline void Poser::UpdateMorphTransform(size_t index, float rate) {
     if(rate<mmd_math_const_eps) {
         return;
     }
     const Model::Morph &morph = model_.GetMorph(index);
-    if(morph.GetType()==Model::Morph::MORPH_TYPE_BONE) {
+    switch(morph.GetType()) {
+    case Model::Morph::MORPH_TYPE_GROUP:
+        for(size_t i=0;i<morph.GetMorphDataNum();++i) {
+            const Model::Morph::MorphData::GroupMorph &data = morph.GetMorphData(i).GetGroupMorph();
+            UpdateMorphTransform(data.GetMorphIndex(), data.GetMorphRate()*rate);
+        }
+        break;
+    case Model::Morph::MORPH_TYPE_VERTEX:
+        for(size_t i=0;i<morph.GetMorphDataNum();++i) {
+            const Model::Morph::MorphData::VertexMorph &data = morph.GetMorphData(i).GetVertexMorph();
+            Vector3f &vertex_image = vertex_images_[data.GetVertexIndex()];
+            vertex_image = vertex_image+data.GetOffset()*rate;
+        }
+        break;
+    case Model::Morph::MORPH_TYPE_BONE:
         for(size_t i=0;i<morph.GetMorphDataNum();++i) {
             const Model::Morph::MorphData::BoneMorph &data = morph.GetMorphData(i).GetBoneMorph();
             BoneImage &bone_image = bone_images_[data.GetBoneIndex()];
             bone_image.morph_translation_ = bone_image.morph_translation_+data.GetTranslation()*rate;
             bone_image.morph_rotation_.q = bone_image.morph_rotation_.q*SLerp(Quaternionf::Identity(), data.GetRotation().q)[rate];
         }
-    } else if(morph.GetType()==Model::Morph::MORPH_TYPE_GROUP) {
-        for(size_t i=0;i<morph.GetMorphDataNum();++i) {
-            const Model::Morph::MorphData::GroupMorph &data = morph.GetMorphData(i).GetGroupMorph();
-            UpdateBoneMorphTransform(data.GetMorphIndex(), data.GetMorphRate()*rate);
-        }
+        break;
+    case Model::Morph::MORPH_TYPE_MATERIAL:
+        break;
+    default:
+        break;
     }
 }
 
 inline void Poser::PrePhysicsPosing() {
+    for(std::vector<Vector3f>::iterator i = vertex_images_.begin();i!=vertex_images_.end();++i) {
+        i->MakeZero();
+    }
     for(std::vector<BoneImage>::iterator i = bone_images_.begin();i!=bone_images_.end();++i) {
         i->morph_translation_.MakeZero();
         i->morph_rotation_.q.MakeIdentity();
@@ -354,8 +375,14 @@ inline void Poser::PrePhysicsPosing() {
         i->total_rotation_.q.MakeIdentity();
         i->total_translation_.MakeZero();
     }
-    for(size_t i=0;i<morph_images_.size();++i) {
-        UpdateBoneMorphTransform(i, morph_images_[i].morph_rate_);
+    for(std::vector<MaterialImage>::iterator i = material_mul_images_.begin();i!=material_mul_images_.end();++i) {
+        i->Init(1.0f);
+    }
+    for(std::vector<MaterialImage>::iterator i = material_add_images_.begin();i!=material_add_images_.end();++i) {
+        i->Init(0.0f);
+    }
+    for(size_t i=0;i<morph_rates_.size();++i) {
+        UpdateMorphTransform(i, morph_rates_[i]);
     }
     UpdateBoneTransform(pre_physics_bones_);
     UpdateBoneSkinningMatrix(pre_physics_bones_);
@@ -368,19 +395,17 @@ inline void Poser::PostPhysicsPosing() {
 
 inline void Poser::Deform() {
     size_t vertex_num = model_.GetVertexNum();
-    for(size_t i=0;i<vertex_num;++i) {
-        Model::Vertex<ref> vertex = model_.GetVertex(i);
-        pose_image.coordinates[i] = vertex.GetCoordinate();
-        pose_image.normals[i] = vertex.GetNormal();
-    }
-
-    // TODO : Vertex Morph Here
+    //for(size_t i=0;i<vertex_num;++i) {
+    //    Model::Vertex<ref> vertex = model_.GetVertex(i);
+    //    pose_image.coordinates[i] = ;
+    //    pose_image.normals[i] = ;
+    //}
 
     for(size_t i=0;i<vertex_num;++i) {
         Model::Vertex<ref> vertex = model_.GetVertex(i);
         const Model::SkinningOperator& op = vertex.GetSkinningOperator();
-        const Vector3f &coordinate = pose_image.coordinates[i];
-        const Vector3f &normal = pose_image.normals[i];
+        const Vector3f &coordinate = vertex.GetCoordinate()+vertex_images_[i];
+        const Vector3f &normal = vertex.GetNormal();
         switch(op.GetSkinningType()) {
         case Model::SkinningOperator::SKINNING_BDEF1:
             {
@@ -451,7 +476,7 @@ inline void Poser::SetBonePose(const std::wstring &name, const Motion::BonePose&
 }
 
 inline void Poser::SetMorphPose(size_t index, const Motion::MorphPose &morph_pose) {
-    morph_images_[index].morph_rate_ = morph_pose.GetWeight();
+    morph_rates_[index] = morph_pose.GetWeight();
 }
 
 inline void Poser::SetMorphPose(const std::wstring &name, const Motion::MorphPose &morph_pose) {
@@ -484,31 +509,57 @@ inline bool Poser::BoneImage::TransformOrder::operator()(size_t a, size_t b) con
     }
 }
 
-inline Poser::MorphImage::MorphImage() : morph_rate_(0.0f) {}
+inline Poser::MaterialImage::MaterialImage(float value) {
+    Init(value);
+}
+
+inline void Poser::MaterialImage::Init(float value) {
+    Vector4f seed;
+    seed.v[0] = seed.v[1] = seed.v[2] = seed.v[3] = shininess_ = edge_size_ = value;
+    diffuse_ = specular_ = ambient_ = edge_color_ = texture_ = sub_texture_ = toon_texture_ = seed;
+}
 
 inline MotionPlayer::MotionPlayer(const Motion& motion, Poser& poser) : motion_(motion), poser_(poser) {
     const Model& model = poser_.GetModel();
     for(size_t i=0;i<model.GetBoneNum();++i) {
         bone_map_.push_back(std::make_pair(model.GetBone(i).GetName(), i));
     }
-    MotionModelMismatchTest test(motion_);
-    std::vector<std::pair<std::wstring, size_t>>::iterator iend = std::remove_if(bone_map_.begin(), bone_map_.end(), test);
-    bone_map_.erase(iend, bone_map_.end());
+    BoneMismatchTest bone_test(motion_);
+    std::vector<std::pair<std::wstring, size_t>>::iterator ibend = std::remove_if(bone_map_.begin(), bone_map_.end(), bone_test);
+    bone_map_.erase(ibend, bone_map_.end());
+
+    for(size_t i=0;i<model.GetMorphNum();++i) {
+        morph_map_.push_back(std::make_pair(model.GetMorph(i).GetName(), i));
+    }
+    MorphMismatchTest morph_test(motion_);
+    std::vector<std::pair<std::wstring, size_t>>::iterator imend = std::remove_if(morph_map_.begin(), morph_map_.end(), morph_test);
+    morph_map_.erase(imend, morph_map_.end());
 }
 
 inline void MotionPlayer::SeekFrame(size_t frame) {
+    for(std::vector<std::pair<std::wstring, size_t>>::iterator i=morph_map_.begin();i!=morph_map_.end();++i) {
+        poser_.SetMorphPose(i->second, motion_.GetMorphPose(i->first, frame));
+    }
     for(std::vector<std::pair<std::wstring, size_t>>::iterator i=bone_map_.begin();i!=bone_map_.end();++i) {
         poser_.SetBonePose(i->second, motion_.GetBonePose(i->first, frame));
     }
 }
 
 inline void MotionPlayer::SeekTime(double time) {
+    for(std::vector<std::pair<std::wstring, size_t>>::iterator i=morph_map_.begin();i!=morph_map_.end();++i) {
+        poser_.SetMorphPose(i->second, motion_.GetMorphPose(i->first, time));
+    }
     for(std::vector<std::pair<std::wstring, size_t>>::iterator i=bone_map_.begin();i!=bone_map_.end();++i) {
         poser_.SetBonePose(i->second, motion_.GetBonePose(i->first, time));
     }
 }
 
-inline MotionPlayer::MotionModelMismatchTest::MotionModelMismatchTest(const Motion& motion) : motion_(&motion) {}
-inline bool MotionPlayer::MotionModelMismatchTest::operator()(const std::pair<std::wstring, size_t>& match_pair) const {
+inline MotionPlayer::BoneMismatchTest::BoneMismatchTest(const Motion& motion) : motion_(&motion) {}
+inline bool MotionPlayer::BoneMismatchTest::operator()(const std::pair<std::wstring, size_t>& match_pair) const {
     return !motion_->IsBoneRegistered(match_pair.first);
+}
+
+inline MotionPlayer::MorphMismatchTest::MorphMismatchTest(const Motion& motion) : motion_(&motion) {}
+inline bool MotionPlayer::MorphMismatchTest::operator()(const std::pair<std::wstring, size_t>& match_pair) const {
+    return !motion_->IsMorphRegistered(match_pair.first);
 }

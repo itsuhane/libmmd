@@ -389,12 +389,12 @@ PmdReader::ReadModel(Model &model) {
                         = morph.GetMorphData(j).GetVertexMorph();
                     size_t morph_data_vertex_index
                         = vertex_morph_data.GetVertexIndex();
-                    vertex_morph_data.SetOffset(
-                        base_morph.GetMorphData(
-                            morph_data_vertex_index
-                        ).GetVertexMorph().GetOffset()+
-                        vertex_morph_data.GetOffset()
-                    );
+                    //vertex_morph_data.SetOffset(
+                    //    base_morph.GetMorphData(
+                    //        morph_data_vertex_index
+                    //    ).GetVertexMorph().GetOffset()+
+                    //    vertex_morph_data.GetOffset()
+                    //);
                     vertex_morph_data.SetVertexIndex(
                         base_morph.GetMorphData(
                             morph_data_vertex_index

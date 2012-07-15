@@ -104,22 +104,71 @@ namespace mmd {
             };
         };
 
-        struct MorphImage {
-            MorphImage();
-            float morph_rate_;
+        class MaterialImage {
+        public:
+            MaterialImage(float value);
+
+            void Init(float value);
+
+            const Vector4f &GetDiffuse() const;
+            void SetDiffuse(const Vector3f &diffuse);
+            void SetDiffuse(const Vector4f &diffuse);
+
+            const Vector4f &GetSpecular() const;
+            void SetSpecular(const Vector3f &specular);
+            void SetSpecular(const Vector4f &specular);
+
+            const Vector4f &GetAmbient() const;
+            void SetAmbient(const Vector3f &ambient);
+            void SetAmbient(const Vector4f &ambient);
+
+            float GetShininess() const;
+            void SetShininess(float shininess);
+
+            const Vector4f &GetEdgeColor() const;
+            void SetEdgeColor(const Vector3f &edge_color);
+            void SetEdgeColor(const Vector4f &edge_color);
+
+            float GetEdgeSize() const;
+            void SetEdgeSize(float edge_size);
+
+            const Vector4f &GetTexture() const;
+            void SetTexture(const Vector3f &texture);
+            void SetTexture(const Vector4f &texture);
+
+            const Vector4f &GetSubTexture() const;
+            void SetSubTexture(const Vector3f &sub_texture);
+            void SetSubTexture(const Vector4f &sub_texture);
+
+            const Vector4f &GetToonTexture() const;
+            void SetToonTexture(const Vector3f &toon_texture);
+            void SetToonTexture(const Vector4f &toon_texture);
+
+        private:
+            Vector4f diffuse_;
+            Vector4f specular_;
+            Vector4f ambient_;
+            float shininess_;
+            Vector4f edge_color_;
+            float edge_size_;
+            Vector4f texture_;
+            Vector4f sub_texture_;
+            Vector4f toon_texture_;
         };
 
+        std::vector<Vector3f> vertex_images_;
         std::vector<BoneImage> bone_images_;
-        std::vector<MorphImage> morph_images_;
+        std::vector<MaterialImage> material_mul_images_;
+        std::vector<MaterialImage> material_add_images_;
+
+        std::vector<float> morph_rates_;
 
         void UpdateBoneTransform(size_t index);
         void UpdateBoneTransform(const std::vector<size_t> &list);
 
         void UpdateBoneSkinningMatrix(const std::vector<size_t> &list);
 
-        void UpdateVertexMorphTransform(size_t index, float rate);
-        void UpdateBoneMorphTransform(size_t index, float rate);
-        //void UpdateUVMorphTransform(size_t index, float rate);
+        void UpdateMorphTransform(size_t index, float rate);
 
         Model &model_;
 
@@ -140,9 +189,10 @@ namespace mmd {
 
     private:
         MotionPlayer &operator=(const MotionPlayer&);
-        class MotionModelMismatchTest {
+
+        class BoneMismatchTest {
         public:
-            MotionModelMismatchTest(const Motion &motion);
+            BoneMismatchTest(const Motion &motion);
             bool operator()(
                 const std::pair<std::wstring, size_t> &match_pair
             ) const;
@@ -150,7 +200,19 @@ namespace mmd {
             const Motion *motion_;
         };
 
+        class MorphMismatchTest {
+        public:
+            MorphMismatchTest(const Motion &motion);
+            bool operator()(
+                const std::pair<std::wstring, size_t> &match_pair
+            ) const;
+        private:
+            const Motion *motion_;
+        };
+
+
         std::vector<std::pair<std::wstring, size_t>> bone_map_;
+        std::vector<std::pair<std::wstring, size_t>> morph_map_;
         const Motion &motion_;
         Poser &poser_;
     };
