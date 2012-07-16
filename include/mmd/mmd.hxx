@@ -73,6 +73,8 @@ namespace mmd {
     typedef Vector4D<float> Vector4f;
     typedef Matrix4x4<float> Matrix4f;
 
+    typedef Bezier<float> interpolator;
+
     namespace {
         const size_t nil = size_t(-1);
     }
@@ -87,6 +89,8 @@ namespace mmd {
 #include "motion/poser.hxx"
 
 #include "motion/physics.hxx"
+
+#include "scene/camera.hxx"
 
 namespace mmd {
     class MMD {

@@ -50,42 +50,42 @@ Motion::BoneKeyframe::SetRotation(const Vector4f &rotation) {
     rotation_ = rotation;
 }
 
-inline const Motion::BoneKeyframe::interpolator_type&
+inline const interpolator&
 Motion::BoneKeyframe::GetXInterpolator() const {
     return x_interpolator_;
 }
 
-inline Motion::BoneKeyframe::interpolator_type&
+inline interpolator&
 Motion::BoneKeyframe::GetXInterpolator() {
     return x_interpolator_;
 }
 
-inline const Motion::BoneKeyframe::interpolator_type&
+inline const interpolator&
 Motion::BoneKeyframe::GetYInterpolator() const {
     return y_interpolator_;
 }
 
-inline Motion::BoneKeyframe::interpolator_type&
+inline interpolator&
 Motion::BoneKeyframe::GetYInterpolator() {
     return y_interpolator_;
 }
 
-inline const Motion::BoneKeyframe::interpolator_type&
+inline const interpolator&
 Motion::BoneKeyframe::GetZInterpolator() const {
     return z_interpolator_;
 }
 
-inline Motion::BoneKeyframe::interpolator_type&
+inline interpolator&
 Motion::BoneKeyframe::GetZInterpolator() {
     return z_interpolator_;
 }
 
-inline const Motion::BoneKeyframe::interpolator_type&
+inline const interpolator&
 Motion::BoneKeyframe::GetRInterpolator() const {
     return r_interpolator_;
 }
 
-inline Motion::BoneKeyframe::interpolator_type&
+inline interpolator&
 Motion::BoneKeyframe::GetRInterpolator() {
     return r_interpolator_;
 }
@@ -100,12 +100,12 @@ Motion::MorphKeyframe::SetWeight(float weight) {
     weight_ = weight;
 }
 
-inline const Motion::MorphKeyframe::interpolator_type&
+inline const interpolator&
 Motion::MorphKeyframe::GetWeightInterpolator() const {
     return w_interpolator_;
 }
 
-inline Motion::MorphKeyframe::interpolator_type&
+inline interpolator&
 Motion::MorphKeyframe::GetWeightInterpolator() {
     return w_interpolator_;
 }
@@ -120,9 +120,18 @@ Motion::IsMorphRegistered(const std::wstring &morph_name) const {
     return (morph_motions_.count(morph_name)>0);
 }
 
-inline const std::wstring& Motion::GetName() const {
-    return name_; }
-inline void Motion::SetName(const std::wstring &name) { name_ = name; }
+inline 
+Motion::Motion() : length_(0) {}
+
+inline const std::wstring&
+Motion::GetName() const {
+    return name_;
+}
+
+inline void
+Motion::SetName(const std::wstring &name) {
+    name_ = name;
+}
 
 inline const Motion::BoneKeyframe&
 Motion::GetBoneKeyframe(const std::wstring &bone_name, size_t frame) const {
@@ -131,6 +140,9 @@ Motion::GetBoneKeyframe(const std::wstring &bone_name, size_t frame) const {
 
 inline Motion::BoneKeyframe&
 Motion::GetBoneKeyframe(const std::wstring &bone_name, size_t frame) {
+    if(frame>length_) {
+        length_ = frame;
+    }
     return bone_motions_[bone_name][frame];
 }
 
@@ -141,12 +153,21 @@ Motion::GetMorphKeyframe(const std::wstring &morph_name, size_t frame) const {
 
 inline Motion::MorphKeyframe&
 Motion::GetMorphKeyframe(const std::wstring &morph_name, size_t frame) {
+    if(frame>length_) {
+        length_ = frame;
+    }
     return morph_motions_[morph_name][frame];
+}
+
+inline size_t
+Motion::GetLength() const {
+    return length_;
 }
 
 inline void
 Motion::Clear() {
     name_.clear();
+    length_ = 0;
     bone_motions_.clear();
     morph_motions_.clear();
 }

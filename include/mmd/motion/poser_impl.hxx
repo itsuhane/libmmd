@@ -522,18 +522,18 @@ inline void Poser::MaterialImage::Init(float value) {
 inline MotionPlayer::MotionPlayer(const Motion& motion, Poser& poser) : motion_(motion), poser_(poser) {
     const Model& model = poser_.GetModel();
     for(size_t i=0;i<model.GetBoneNum();++i) {
-        bone_map_.push_back(std::make_pair(model.GetBone(i).GetName(), i));
+        const std::wstring &name = model.GetBone(i).GetName();
+        if(motion_.IsBoneRegistered(name)) {
+            bone_map_.push_back(std::make_pair(name, i));
+        }
     }
-    BoneMismatchTest bone_test(motion_);
-    std::vector<std::pair<std::wstring, size_t>>::iterator ibend = std::remove_if(bone_map_.begin(), bone_map_.end(), bone_test);
-    bone_map_.erase(ibend, bone_map_.end());
 
     for(size_t i=0;i<model.GetMorphNum();++i) {
-        morph_map_.push_back(std::make_pair(model.GetMorph(i).GetName(), i));
+        const std::wstring &name = model.GetMorph(i).GetName();
+        if(motion_.IsMorphRegistered(name)) {
+            morph_map_.push_back(std::make_pair(name, i));
+        }
     }
-    MorphMismatchTest morph_test(motion_);
-    std::vector<std::pair<std::wstring, size_t>>::iterator imend = std::remove_if(morph_map_.begin(), morph_map_.end(), morph_test);
-    morph_map_.erase(imend, morph_map_.end());
 }
 
 inline void MotionPlayer::SeekFrame(size_t frame) {
@@ -552,14 +552,4 @@ inline void MotionPlayer::SeekTime(double time) {
     for(std::vector<std::pair<std::wstring, size_t>>::iterator i=bone_map_.begin();i!=bone_map_.end();++i) {
         poser_.SetBonePose(i->second, motion_.GetBonePose(i->first, time));
     }
-}
-
-inline MotionPlayer::BoneMismatchTest::BoneMismatchTest(const Motion& motion) : motion_(&motion) {}
-inline bool MotionPlayer::BoneMismatchTest::operator()(const std::pair<std::wstring, size_t>& match_pair) const {
-    return !motion_->IsBoneRegistered(match_pair.first);
-}
-
-inline MotionPlayer::MorphMismatchTest::MorphMismatchTest(const Motion& motion) : motion_(&motion) {}
-inline bool MotionPlayer::MorphMismatchTest::operator()(const std::pair<std::wstring, size_t>& match_pair) const {
-    return !motion_->IsMorphRegistered(match_pair.first);
 }

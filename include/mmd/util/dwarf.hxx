@@ -91,6 +91,8 @@ namespace mmd {
         std::wstring GetFilename() const;
         std::wstring GetLocation() const;
 
+        void Seek(size_t position);
+
         size_t GetLength() const;
         size_t GetPosition() const;
         ptrdiff_t GetRemainedLength() const;

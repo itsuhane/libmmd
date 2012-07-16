@@ -33,83 +33,45 @@ namespace mmd {
 
         class BoneKeyframe {
         public:
-            typedef Bezier<float> interpolator_type;
-
             const Vector3f &GetTranslation() const;
             void SetTranslation(const Vector3f &translation);
 
             const Vector4f &GetRotation() const;
             void SetRotation(const Vector4f &rotation);
 
-            const interpolator_type &GetXInterpolator() const;
-            interpolator_type &GetXInterpolator();
-            const interpolator_type &GetYInterpolator() const;
-            interpolator_type &GetYInterpolator();
-            const interpolator_type &GetZInterpolator() const;
-            interpolator_type &GetZInterpolator();
-            const interpolator_type &GetRInterpolator() const;
-            interpolator_type &GetRInterpolator();
+            const interpolator &GetXInterpolator() const;
+            interpolator &GetXInterpolator();
+            const interpolator &GetYInterpolator() const;
+            interpolator &GetYInterpolator();
+            const interpolator &GetZInterpolator() const;
+            interpolator &GetZInterpolator();
+            const interpolator &GetRInterpolator() const;
+            interpolator &GetRInterpolator();
 
         private:
             Vector3f translation_;
             Vector4f rotation_;
 
-            interpolator_type x_interpolator_;
-            interpolator_type y_interpolator_;
-            interpolator_type z_interpolator_;
-            interpolator_type r_interpolator_;
+            interpolator x_interpolator_;
+            interpolator y_interpolator_;
+            interpolator z_interpolator_;
+            interpolator r_interpolator_;
         };
 
         class MorphKeyframe {
         public:
-            typedef Bezier<float> interpolator_type;
-
             float GetWeight() const;
             void SetWeight(float weight);
 
-            const interpolator_type &GetWeightInterpolator() const;
-            interpolator_type &GetWeightInterpolator();
+            const interpolator &GetWeightInterpolator() const;
+            interpolator &GetWeightInterpolator();
 
         private:
             float weight_;
-            interpolator_type w_interpolator_;
+            interpolator w_interpolator_;
         };
 
-        //class CameraKeyframe {
-        //public:
-        //    typedef Bezier<float> interpolator_type;
-
-        //    float GetFOV() const;
-        //    void SetFOV(float fov);
-
-        //    float GetFocalLength() const;
-        //    void SetFocalLength(float focal_length);
-
-        //    bool IsOrthographic() const;
-        //    void SetOrthographic(bool orthographic);
-
-        //    const Vector3f &GetPosition() const;
-        //    void SetPosition(const Vector3f &position);
-
-        //    const Vector3f &GetRotation() const;
-        //    void SetRotation(const Vector3f &rotation);
-
-        //private:
-        //    float fov_;
-        //    float focal_length_;
-
-        //    Vector3f position_;
-        //    Vector3f rotation_;
-
-        //    interpolator_type x_interpolator_;
-        //    interpolator_type y_interpolator_;
-        //    interpolator_type z_interpolator_;
-        //    interpolator_type rx_interpolator_;
-        //    interpolator_type ry_interpolator_;
-        //    interpolator_type rz_interpolator_;
-
-        //    bool orthographic_;
-        //};
+        Motion();
 
         const std::wstring &GetName() const;
         void SetName(const std::wstring &name);
@@ -145,17 +107,19 @@ namespace mmd {
         bool IsBoneRegistered(const std::wstring &bone_name) const;
         bool IsMorphRegistered(const std::wstring &morph_name) const;
 
+        size_t GetLength() const;
         void Clear();
 
     private:
         std::wstring name_;
+        size_t length_;
         std::map<std::wstring, std::map<size_t, BoneKeyframe>> bone_motions_;
         std::map<std::wstring, std::map<size_t, MorphKeyframe>> morph_motions_;
     };
 
     class Pose {
     public:
-
+        // TODO - pose related features
     private:
         std::map<std::string, Motion::BonePose> bone_poses_;
         std::map<std::string, Motion::MorphPose> morph_poses_;

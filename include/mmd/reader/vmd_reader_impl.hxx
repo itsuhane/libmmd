@@ -36,28 +36,28 @@ inline void VmdReader::ReadMotion(Motion &motion) {
             c_0.p.y = b.x_interpolator[4]*r;
             c_1.p.x = b.x_interpolator[8]*r;
             c_1.p.y = b.x_interpolator[12]*r;
-            Motion::BoneKeyframe::interpolator_type &x_interpolator = keyframe.GetXInterpolator();
+            interpolator &x_interpolator = keyframe.GetXInterpolator();
             x_interpolator.SetC(c_0, c_1);
 
             c_0.p.x = b.y_interpolator[0]*r;
             c_0.p.y = b.y_interpolator[4]*r;
             c_1.p.x = b.y_interpolator[8]*r;
             c_1.p.y = b.y_interpolator[12]*r;
-            Motion::BoneKeyframe::interpolator_type &y_interpolator = keyframe.GetYInterpolator();
+            interpolator &y_interpolator = keyframe.GetYInterpolator();
             y_interpolator.SetC(c_0, c_1);
 
             c_0.p.x = b.z_interpolator[0]*r;
             c_0.p.y = b.z_interpolator[4]*r;
             c_1.p.x = b.z_interpolator[8]*r;
             c_1.p.y = b.z_interpolator[12]*r;
-            Motion::BoneKeyframe::interpolator_type &z_interpolator = keyframe.GetZInterpolator();
+            interpolator &z_interpolator = keyframe.GetZInterpolator();
             z_interpolator.SetC(c_0, c_1);
 
             c_0.p.x = b.r_interpolator[0]*r;
             c_0.p.y = b.r_interpolator[4]*r;
             c_1.p.x = b.r_interpolator[8]*r;
             c_1.p.y = b.r_interpolator[12]*r;
-            Motion::BoneKeyframe::interpolator_type &r_interpolator = keyframe.GetRInterpolator();
+            interpolator &r_interpolator = keyframe.GetRInterpolator();
             r_interpolator.SetC(c_0, c_1);
         }
 
@@ -71,6 +71,32 @@ inline void VmdReader::ReadMotion(Motion &motion) {
 
         camera_motion_shift_ = file_.GetPosition();
 
+    } catch(std::exception& e) {
+        throw exception(std::string("VmdReader: Exception caught."), e);
+    } catch(...) {
+        throw exception(std::string("VmdReader: Non-standard exception caught."));
+    }
+}
+
+inline void VmdReader::ReadCameraMotion(CameraMotion &camera_motion) {
+    if(camera_motion_shift_==nil) {
+        Motion motion;
+        ReadMotion(motion);
+    } else if(file_.GetPosition()!=camera_motion_shift_) {
+        file_.Seek(camera_motion_shift_);
+    }
+    try {
+        camera_motion.Clear();
+        size_t camera_motion_num = file_.Read<std::uint32_t>();
+        for(size_t i=0;i<camera_motion_num;++i) {
+            interprete::vmd_camera c = file_.Read<interprete::vmd_camera>();
+            CameraMotion::CameraKeyframe &keyframe = camera_motion.GetCameraKeyframe(c.nframe);
+            keyframe.SetFOV(c.fov);
+            keyframe.SetFocalLength(c.focal_length);
+            keyframe.SetOrthographic(c.orthographic!=0);
+            keyframe.SetPosition(c.position);
+            keyframe.SetRotation(c.rotation);
+        }
     } catch(std::exception& e) {
         throw exception(std::string("VmdReader: Exception caught."), e);
     } catch(...) {

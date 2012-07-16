@@ -13,7 +13,7 @@ namespace mmd {
 
     class CameraMotionReader {
     public:
-        //virtual void ReadCameraMotion(CameraMotion &camera_motion) = 0;
+        virtual void ReadCameraMotion(CameraMotion &camera_motion) = 0;
     };
 
 } /* End of namespace mmd */

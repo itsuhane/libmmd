@@ -153,6 +153,12 @@ inline std::wstring FileReader::GetLocation() const {
     }
 }
 
+inline void FileReader::Seek(size_t position) {
+    if(position<=buffer_.size()) {
+        cursor_ = position;
+    }
+}
+
 inline size_t FileReader::GetLength() const {
     return buffer_.size();
 }

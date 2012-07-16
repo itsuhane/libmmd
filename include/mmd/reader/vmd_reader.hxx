@@ -17,6 +17,7 @@ namespace mmd {
     public:
         VmdReader(FileReader &file) : file_(file), camera_motion_shift_(nil), light_motion_shift_(nil) {}
         /*virtual*/ void ReadMotion(Motion &motion);
+        /*virtual*/ void ReadCameraMotion(CameraMotion &camera_motion);
     private:
         FileReader &file_;
         mutable size_t camera_motion_shift_;

@@ -190,29 +190,9 @@ namespace mmd {
     private:
         MotionPlayer &operator=(const MotionPlayer&);
 
-        class BoneMismatchTest {
-        public:
-            BoneMismatchTest(const Motion &motion);
-            bool operator()(
-                const std::pair<std::wstring, size_t> &match_pair
-            ) const;
-        private:
-            const Motion *motion_;
-        };
-
-        class MorphMismatchTest {
-        public:
-            MorphMismatchTest(const Motion &motion);
-            bool operator()(
-                const std::pair<std::wstring, size_t> &match_pair
-            ) const;
-        private:
-            const Motion *motion_;
-        };
-
-
         std::vector<std::pair<std::wstring, size_t>> bone_map_;
         std::vector<std::pair<std::wstring, size_t>> morph_map_;
+
         const Motion &motion_;
         Poser &poser_;
     };
