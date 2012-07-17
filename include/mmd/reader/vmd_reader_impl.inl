@@ -14,7 +14,7 @@ inline void VmdReader::ReadMotion(Motion &motion) {
 
         std::string magic = header.magic;
         if(magic!="Vocaloid Motion Data 0002") {
-            throw exception(std::string("VmdReader: File is not a VMD file."));
+            throw exception(std::string("VmdReader::ReadMotion: File is not a VMD file."));
         }
 
         motion.Clear();
@@ -72,9 +72,9 @@ inline void VmdReader::ReadMotion(Motion &motion) {
         camera_motion_shift_ = file_.GetPosition();
 
     } catch(std::exception& e) {
-        throw exception(std::string("VmdReader: Exception caught."), e);
+        throw exception(std::string("VmdReader::ReadMotion: Exception caught."), e);
     } catch(...) {
-        throw exception(std::string("VmdReader: Non-standard exception caught."));
+        throw exception(std::string("VmdReader::ReadMotion: Non-standard exception caught."));
     }
 }
 
@@ -85,8 +85,11 @@ inline void VmdReader::ReadCameraMotion(CameraMotion &camera_motion) {
     } else if(file_.GetPosition()!=camera_motion_shift_) {
         file_.Seek(camera_motion_shift_);
     }
+    camera_motion.Clear();
+    if(file_.GetRemainedLength()==0) {
+        return;
+    }
     try {
-        camera_motion.Clear();
         size_t camera_motion_num = file_.Read<std::uint32_t>();
         for(size_t i=0;i<camera_motion_num;++i) {
             interprete::vmd_camera c = file_.Read<interprete::vmd_camera>();
@@ -98,8 +101,8 @@ inline void VmdReader::ReadCameraMotion(CameraMotion &camera_motion) {
             keyframe.SetRotation(c.rotation);
         }
     } catch(std::exception& e) {
-        throw exception(std::string("VmdReader: Exception caught."), e);
+        throw exception(std::string("VmdReader::ReadCameraMotion: Exception caught."), e);
     } catch(...) {
-        throw exception(std::string("VmdReader: Non-standard exception caught."));
+        throw exception(std::string("VmdReader::ReadCameraMotion: Non-standard exception caught."));
     }
 }
