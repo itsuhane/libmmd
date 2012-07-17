@@ -6,23 +6,23 @@
             http://www.boost.org/LICENSE_1_0.txt)
 **/
 
-#ifndef __PMD_READER_HXX_E170DC44E36CE685148149AD8165DD4C_INCLUDED__
-#define __PMD_READER_HXX_E170DC44E36CE685148149AD8165DD4C_INCLUDED__
+#ifndef __PMX_READER_HXX_BE1BD64A729DD364EF966DB405558176_INCLUDED__
+#define __PMX_READER_HXX_BE1BD64A729DD364EF966DB405558176_INCLUDED__
 
-#include "interprete/pmd_types.hxx"
+#include "interprete/pmx_types.inl"
 
 namespace mmd {
 
-    class PmdReader : public ModelReader {
+    class PmxReader : public ModelReader {
     public:
-        PmdReader(FileReader &file);
+        PmxReader(FileReader &file);
         /*virtual*/ void ReadModel(Model &model);
     private:
         FileReader &file_;
     };
 
-#include "pmd_reader_impl.hxx"
+#include "pmx_reader_impl.inl"
 
 } /* End of namespace mmd */
 
-#endif /* __PMD_READER_HXX_E170DC44E36CE685148149AD8165DD4C_INCLUDED__ */
+#endif /* __PMX_READER_HXX_BE1BD64A729DD364EF966DB405558176_INCLUDED__ */

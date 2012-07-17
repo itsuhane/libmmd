@@ -9,7 +9,7 @@
 #ifndef __VMD_READER_HXX_E08EF07ADE305D11E317E0378D09DC07_INCLUDED__
 #define __VMD_READER_HXX_E08EF07ADE305D11E317E0378D09DC07_INCLUDED__
 
-#include "interprete/vmd_types.hxx"
+#include "interprete/vmd_types.inl"
 
 namespace mmd {
 
@@ -24,7 +24,7 @@ namespace mmd {
         mutable size_t light_motion_shift_;
     };
 
-#include "vmd_reader_impl.hxx"
+#include "vmd_reader_impl.inl"
 
 } /* End of namespace mmd */
 

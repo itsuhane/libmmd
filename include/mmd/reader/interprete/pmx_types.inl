@@ -13,7 +13,7 @@ namespace mmd {
 
     namespace interprete {
 
-#include "../../util/pack.hxx"
+#include "../../util/pack.inc"
         struct PACKED pmx_header {
             mmd_string<4> magic;
             float version;
@@ -94,7 +94,7 @@ namespace mmd {
             Vector3f stiffness[2];
         };
 
-#include "../../util/unpack.hxx"
+#include "../../util/unpack.inc"
 
     } /* End of namespace interprete */
 

@@ -46,7 +46,7 @@ namespace mmd {
         }
     };
 
-#include "texture_impl.hxx"
+#include "texture_impl.inl"
 
 } /* End of namespace mmd */
 

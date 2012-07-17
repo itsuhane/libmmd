@@ -733,14 +733,14 @@ namespace mmd {
         std::vector<Constraint> constraints_;
     };
 
-#include "model_skinning_operator_impl.hxx"
-#include "model_vertex_impl.hxx"
-#include "model_part_impl.hxx"
-#include "model_bone_impl.hxx"
-#include "model_morph_impl.hxx"
-#include "model_rigid_body_impl.hxx"
-#include "model_constraint_impl.hxx"
-#include "model_impl.hxx"
+#include "model_skinning_operator_impl.inl"
+#include "model_vertex_impl.inl"
+#include "model_part_impl.inl"
+#include "model_bone_impl.inl"
+#include "model_morph_impl.inl"
+#include "model_rigid_body_impl.inl"
+#include "model_constraint_impl.inl"
+#include "model_impl.inl"
 
 } /* End of namespace mmd */
 

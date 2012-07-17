@@ -13,7 +13,7 @@ namespace mmd {
 
     namespace interprete {
 
-#include "../../util/pack.hxx"
+#include "../../util/pack.inc"
         struct PACKED pmd_model_info {
             mmd_string<20> name;
             mmd_string<256> description;
@@ -107,7 +107,7 @@ namespace mmd {
             Vector3f rotation_limit[2];
             Vector3f stiffness[2];
         };
-#include "../../util/unpack.hxx"
+#include "../../util/unpack.inc"
 
         struct pmd_raw_ik {
             interprete::pmd_ik_preamble preamble;

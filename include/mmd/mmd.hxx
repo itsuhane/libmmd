@@ -26,7 +26,7 @@
      "alignment changed after including header, maybe due to missing
       #pragma pack(pop)"
       This warning is generated due to the use of packing directives with
-      "pack.hxx" and "unpack.hxx"
+      "pack.inl" and "unpack.inl"
     C4996 :
      "'xxx': This function or variable may be unsafe. Consider using xxx
       instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online
@@ -35,7 +35,7 @@
 #pragma warning( disable : 4100 4103 4189 4514 4571 4710 4819 4820 4996 )
 #endif
 
-#include "util/macro.hxx"
+#include "util/macro.inc"
 
 #include <cmath>
 #include <cstddef>
@@ -63,8 +63,8 @@
 #include <iconv.h>
 #endif
 
-#include "util/dwarf.hxx"
-#include "util/math.hxx"
+#include "util/dwarf.inl"
+#include "util/math.inl"
 
 namespace mmd {
     typedef Quaternion<float> Quaternionf;
@@ -81,16 +81,16 @@ namespace mmd {
 
 } /* End of namespace mmd */
 
-#include "util/texture.hxx"
-#include "material/material.hxx"
+#include "util/texture.inl"
+#include "material/material.inl"
 
-#include "model/model.hxx"
-#include "motion/motion.hxx"
-#include "motion/poser.hxx"
+#include "model/model.inl"
+#include "motion/motion.inl"
+#include "motion/poser.inl"
 
-#include "motion/physics.hxx"
+#include "motion/physics.inl"
 
-#include "scene/camera.hxx"
+#include "scene/camera.inl"
 
 namespace mmd {
     class MMD {
@@ -103,18 +103,18 @@ namespace mmd {
     };
 }
 
-#include "reader/model_reader.hxx"
-#include "reader/motion_reader.hxx"
-#include "reader/pose_reader.hxx"
-#include "reader/camera_motion_reader.hxx"
-#include "reader/light_motion_reader.hxx"
+#include "reader/model_reader.inl"
+#include "reader/motion_reader.inl"
+#include "reader/pose_reader.inl"
+#include "reader/camera_motion_reader.inl"
+#include "reader/light_motion_reader.inl"
 
-#include "reader/pmd_reader.hxx"
-#include "reader/pmx_reader.hxx"
-#include "reader/vmd_reader.hxx"
+#include "reader/pmd_reader.inl"
+#include "reader/pmx_reader.inl"
+#include "reader/vmd_reader.inl"
 
 namespace mmd {
-#include "mmd_facility_impl.hxx"
+#include "mmd_facility_impl.inl"
     namespace {
         MMD &mmd = MMD::GetMMD();
     }

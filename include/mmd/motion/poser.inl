@@ -197,7 +197,7 @@ namespace mmd {
         Poser &poser_;
     };
 
-#include "poser_impl.hxx"
+#include "poser_impl.inl"
 
 } /* End of namespace mmd */
 

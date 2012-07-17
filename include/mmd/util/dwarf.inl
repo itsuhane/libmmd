@@ -59,14 +59,14 @@ namespace mmd {
     };
 
     typedef std::vector<std::uint8_t> buffer_type;
-#include "pack.hxx"
+#include "pack.inc"
     template<size_t length>
     struct PACKED mmd_string
     {
         std::uint8_t content_[length];
         operator std::string () const;
     };
-#include "unpack.hxx"
+#include "unpack.inc"
 
     class FileReader
     {
@@ -108,7 +108,7 @@ namespace mmd {
     std::wstring UTF8ToUTF16String(const std::string &s);
     std::wstring ShiftJISToUTF16String(const std::string &s);
 
-#include "dwarf_impl.hxx"
+#include "dwarf_impl.inl"
 
 } /* End of namespace mmd */
 

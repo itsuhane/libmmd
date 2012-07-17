@@ -13,7 +13,7 @@ namespace mmd {
 
     namespace interprete {
 
-#include "../../util/pack.hxx"
+#include "../../util/pack.inc"
         struct PACKED vmd_header {
             mmd_string<30> magic;
             mmd_string<20> name;
@@ -57,7 +57,7 @@ namespace mmd {
             std::uint8_t mode;
             float distance;
         };
-#include "../../util/unpack.hxx"
+#include "../../util/unpack.inc"
 
     } /* End of namespace interprete */
 

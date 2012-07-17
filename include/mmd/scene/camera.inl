@@ -72,7 +72,7 @@ namespace mmd {
         std::map<size_t, CameraKeyframe> camera_motions_;
     };
 
-#include "camera_impl.hxx"
+#include "camera_impl.inl"
 
 } /* End of namespace mmd */
 

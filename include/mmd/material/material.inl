@@ -107,7 +107,7 @@ namespace mmd {
         std::wstring meta_info_;
     };
 
-#include "material_impl.hxx"
+#include "material_impl.inl"
 
 } /* End of namespace mmd */
 
