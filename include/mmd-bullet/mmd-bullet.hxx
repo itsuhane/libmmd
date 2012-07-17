@@ -97,7 +97,7 @@ namespace mmd {
         std::map<Poser*, std::vector<btGeneric6DofSpringConstraint*>> constraints_;
     };
 
-#include "mmd-bullet_impl.hxx"
+#include "mmd-bullet_impl.inl"
 } /* End of namespace mmd */
 
 #ifdef _MSC_VER
