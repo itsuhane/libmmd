@@ -104,8 +104,20 @@ namespace mmd {
             const std::wstring &morph_name, double time
         ) const;
 
+        void RegisterBone(const std::wstring &bone_name);
+        void RegisterMorph(const std::wstring &morph_name);
+
+        void UnregisterBone(const std::wstring &bone_name);
+        void UnregisterMorph(const std::wstring &morph_name);
+
         bool IsBoneRegistered(const std::wstring &bone_name) const;
         bool IsMorphRegistered(const std::wstring &morph_name) const;
+
+        size_t QueryBoneKeyframeForward(const std::wstring &bone_name, size_t frame) const;
+        size_t QueryBoneKeyframeBackward(const std::wstring &bone_name, size_t frame) const;
+
+        size_t QueryMorphKeyframeForward(const std::wstring &morph_name, size_t frame) const;
+        size_t QueryMorphKeyframeBackward(const std::wstring &morph_name, size_t frame) const;
 
         size_t GetLength() const;
         void Clear();

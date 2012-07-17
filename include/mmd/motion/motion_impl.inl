@@ -110,6 +110,26 @@ Motion::MorphKeyframe::GetWeightInterpolator() {
     return w_interpolator_;
 }
 
+inline void
+Motion::RegisterBone(const std::wstring &bone_name) {
+    bone_motions_.insert(std::make_pair(bone_name, std::map<size_t, BoneKeyframe>()));
+}
+
+inline void
+Motion::RegisterMorph(const std::wstring &morph_name) {
+    morph_motions_.insert(std::make_pair(morph_name, std::map<size_t, MorphKeyframe>()));
+}
+
+inline void
+Motion::UnregisterBone(const std::wstring &bone_name) {
+    bone_motions_.erase(bone_name);
+}
+
+inline void
+Motion::UnregisterMorph(const std::wstring &morph_name) {
+    morph_motions_.erase(morph_name);
+}
+
 inline bool
 Motion::IsBoneRegistered(const std::wstring &bone_name) const {
     return (bone_motions_.count(bone_name)>0);
@@ -118,6 +138,66 @@ Motion::IsBoneRegistered(const std::wstring &bone_name) const {
 inline bool
 Motion::IsMorphRegistered(const std::wstring &morph_name) const {
     return (morph_motions_.count(morph_name)>0);
+}
+
+inline size_t
+Motion::QueryBoneKeyframeForward(const std::wstring &bone_name, size_t frame) const {
+    std::map<std::wstring, std::map<size_t, BoneKeyframe>>::const_iterator i = bone_motions_.find(bone_name);
+    if(i!=bone_motions_.end()) {
+        std::map<size_t, BoneKeyframe>::const_iterator j = i->second.lower_bound(frame);
+        if(j!=i->second.end()) {
+            return j->first;
+        } else {
+            return nil;
+        }
+    } else {
+        return nil;
+    }
+}
+
+inline size_t
+Motion::QueryBoneKeyframeBackward(const std::wstring &bone_name, size_t frame) const {
+    std::map<std::wstring, std::map<size_t, BoneKeyframe>>::const_iterator i = bone_motions_.find(bone_name);
+    if(i!=bone_motions_.end()) {
+        std::map<size_t, BoneKeyframe>::const_iterator j = i->second.upper_bound(frame);
+        if(j!=i->second.begin()) {
+            return (--j)->first;
+        } else {
+            return nil;
+        }
+    } else {
+        return nil;
+    }
+}
+
+inline size_t
+Motion::QueryMorphKeyframeForward(const std::wstring &morph_name, size_t frame) const {
+    std::map<std::wstring, std::map<size_t, MorphKeyframe>>::const_iterator i = morph_motions_.find(morph_name);
+    if(i!=morph_motions_.end()) {
+        std::map<size_t, MorphKeyframe>::const_iterator j = i->second.lower_bound(frame);
+        if(j!=i->second.end()) {
+            return j->first;
+        } else {
+            return nil;
+        }
+    } else {
+        return nil;
+    }
+}
+
+inline size_t
+Motion::QueryMorphKeyframeBackward(const std::wstring &morph_name, size_t frame) const {
+    std::map<std::wstring, std::map<size_t, MorphKeyframe>>::const_iterator i = morph_motions_.find(morph_name);
+    if(i!=morph_motions_.end()) {
+        std::map<size_t, MorphKeyframe>::const_iterator j = i->second.upper_bound(frame);
+        if(j!=i->second.begin()) {
+            return (--j)->first;
+        } else {
+            return nil;
+        }
+    } else {
+        return nil;
+    }
 }
 
 inline 
@@ -176,6 +256,12 @@ inline Motion::BonePose
 Motion::GetBonePose(const std::wstring &bone_name, size_t frame) const {
     const std::map<size_t, BoneKeyframe>& keyframes
         = bone_motions_.find(bone_name)->second;
+
+    if(keyframes.size()==0) {
+        Vector4f rot;
+        rot.q.MakeIdentity();
+        return BonePose(Vector3f(), rot);
+    }
 
     if(keyframes.begin()->first>=frame) {
         const BoneKeyframe& key = keyframes.begin()->second;
@@ -237,6 +323,12 @@ Motion::GetBonePose(const std::wstring &bone_name, double time) const {
     const std::map<size_t, BoneKeyframe>& keyframes
         = bone_motions_.find(bone_name)->second;
 
+    if(keyframes.size()==0) {
+        Vector4f rot;
+        rot.q.MakeIdentity();
+        return BonePose(Vector3f(), rot);
+    }
+
     double dframe = time * 30.0;
 
     if(keyframes.begin()->first>=dframe) {
@@ -289,9 +381,12 @@ Motion::GetBonePose(const std::wstring &bone_name, double time) const {
 
 inline Motion::MorphPose
 Motion::GetMorphPose(const std::wstring &morph_name, size_t frame) const {
-
     const std::map<size_t, MorphKeyframe>& keyframes
         = morph_motions_.find(morph_name)->second;
+
+    if(keyframes.size()==0) {
+        return MorphPose(0.0f);
+    }
 
     if(keyframes.begin()->first>=frame) {
         const MorphKeyframe& key = keyframes.begin()->second;
@@ -332,6 +427,10 @@ inline Motion::MorphPose
 Motion::GetMorphPose(const std::wstring &morph_name, double time) const {
     const std::map<size_t, MorphKeyframe>& keyframes
         = morph_motions_.find(morph_name)->second;
+
+    if(keyframes.size()==0) {
+        return MorphPose(0.0f);
+    }
 
     double dframe = time * 30.0;
 
